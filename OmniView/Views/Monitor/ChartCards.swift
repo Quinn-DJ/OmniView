@@ -72,26 +72,27 @@ struct InfoPanel<Content: View>: View {
     }
 }
 
-// MARK: - 图表图例值（参考 mac-scope 的 ChartLegendValue）
+// MARK: - 图表图例行（窄列布局：圆点 + 标题 + 数值）
 
-struct ChartLegendValue: View {
+struct ChartLegendRow: View {
     let title: String
     let value: String
     let color: Color
 
     var body: some View {
-        HStack(spacing: 7) {
+        HStack(spacing: 6) {
             Circle()
                 .fill(color)
                 .frame(width: 7, height: 7)
-            VStack(alignment: .leading, spacing: 2) {
-                Text(title)
-                    .font(.caption)
-                    .foregroundStyle(.secondary)
-                Text(value)
-                    .font(.subheadline.weight(.semibold))
-                    .monospacedDigit()
-            }
+            Text(title)
+                .font(.caption)
+                .foregroundStyle(.secondary)
+            Spacer(minLength: 4)
+            Text(value)
+                .font(.subheadline.weight(.semibold))
+                .monospacedDigit()
+                .lineLimit(1)
+                .minimumScaleFactor(0.8)
         }
     }
 }

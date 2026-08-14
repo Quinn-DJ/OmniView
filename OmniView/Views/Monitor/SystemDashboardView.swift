@@ -2,13 +2,18 @@ import Charts
 import SwiftUI
 
 /// 系统监控仪表盘
-/// 布局参考 mac-scope 的「性能与功耗」页：
-/// 状态指标行 + CPU / 功耗 / 温度 / 散热 面板 + 内存 / 网络 / 磁盘 / 电池面板
+/// 布局：顶部 6 项简要指标（CPU / 内存 / 功耗 / 温度 / 网络 / 磁盘）
+///       + 下方 3 列图表/详情面板
 struct SystemDashboardView: View {
     @EnvironmentObject private var viewModel: SystemMonitorViewModel
 
     private let statusColumns = [
-        GridItem(.adaptive(minimum: 175, maximum: 260), spacing: 12),
+        GridItem(.adaptive(minimum: 165, maximum: 240), spacing: 12),
+    ]
+    private let panelColumns = [
+        GridItem(.flexible(), spacing: 12),
+        GridItem(.flexible(), spacing: 12),
+        GridItem(.flexible(), spacing: 12),
     ]
 
     var body: some View {
@@ -16,20 +21,22 @@ struct SystemDashboardView: View {
             VStack(spacing: 16) {
                 if let snapshot = viewModel.snapshot {
                     statusMetrics(snapshot)
-                    cpuPanel(snapshot)
-                    powerPanel(snapshot)
-                    thermalPanel(snapshot)
-                    coolingPanel(snapshot)
-                    memoryPanel(snapshot)
-                    networkPanel(snapshot)
-                    diskPanel(snapshot)
-                    batteryPanel(snapshot)
+                    LazyVGrid(columns: panelColumns, spacing: 12) {
+                        cpuPanel(snapshot)
+                        memoryPanel(snapshot)
+                        powerPanel(snapshot)
+                        thermalPanel(snapshot)
+                        coolingPanel(snapshot)
+                        networkPanel(snapshot)
+                        diskPanel(snapshot)
+                        batteryPanel(snapshot)
+                    }
                 } else {
                     ProgressView("正在采集系统指标…")
                         .frame(maxWidth: .infinity, minHeight: 300)
                 }
             }
-            .frame(maxWidth: 900)
+            .frame(maxWidth: 1060)
             .frame(maxWidth: .infinity)
             .padding(.horizontal, 24)
             .padding(.bottom, 28)
@@ -47,7 +54,7 @@ struct SystemDashboardView: View {
         }
     }
 
-    // MARK: - 状态指标行
+    // MARK: - 简要指标行（6 项）
 
     private func statusMetrics(_ snapshot: SystemSnapshot) -> some View {
         LazyVGrid(columns: statusColumns, spacing: 12) {
@@ -57,6 +64,14 @@ struct SystemDashboardView: View {
                 value: Format.percent(snapshot.cpu.total),
                 detail: "用户 \(Format.percent(snapshot.cpu.user, fractionDigits: 1)) · 系统 \(Format.percent(snapshot.cpu.system, fractionDigits: 1))",
                 indicatorColor: utilizationColor(snapshot.cpu.total / 100)
+            )
+
+            StatusMetricCard(
+                title: "内存",
+                systemImage: "memorychip",
+                value: Format.percent(snapshot.memory.usedFraction * 100),
+                detail: "已用 \(Format.bytes(snapshot.memory.used)) · 可用 \(Format.bytes(snapshot.memory.available))",
+                indicatorColor: memoryColor(snapshot.memory.usedFraction)
             )
 
             StatusMetricCard(
@@ -76,11 +91,19 @@ struct SystemDashboardView: View {
             )
 
             StatusMetricCard(
-                title: "风扇转速",
-                systemImage: "fan",
-                value: fanHeadline(snapshot.cooling),
-                detail: fanSupportDetail(snapshot.cooling),
-                indicatorColor: .secondary
+                title: "网络",
+                systemImage: "network",
+                value: "↓ \(Format.rate(snapshot.network.downloadRate))",
+                detail: "↑ \(Format.rate(snapshot.network.uploadRate))",
+                indicatorColor: .blue
+            )
+
+            StatusMetricCard(
+                title: "磁盘",
+                systemImage: "internaldrive",
+                value: Format.percent(snapshot.disk.usedFraction * 100),
+                detail: "可用 \(Format.bytes(snapshot.disk.available)) · 共 \(Format.bytes(snapshot.disk.total))",
+                indicatorColor: diskColor(snapshot.disk.usedFraction)
             )
         }
     }
@@ -89,6 +112,22 @@ struct SystemDashboardView: View {
         switch fraction {
         case ..<0.5: return .blue
         case ..<0.8: return .orange
+        default: return .red
+        }
+    }
+
+    private func memoryColor(_ fraction: Double) -> Color {
+        switch fraction {
+        case ..<0.6: return .blue
+        case ..<0.85: return .orange
+        default: return .red
+        }
+    }
+
+    private func diskColor(_ fraction: Double) -> Color {
+        switch fraction {
+        case ..<0.7: return .blue
+        case ..<0.9: return .orange
         default: return .red
         }
     }
@@ -118,22 +157,6 @@ struct SystemDashboardView: View {
         return .blue
     }
 
-    private func fanHeadline(_ cooling: CoolingUsage) -> String {
-        guard cooling.state == .available else { return "—" }
-        return Format.rpm(cooling.fans.map(\.currentRPM).max())
-    }
-
-    private func fanSupportDetail(_ cooling: CoolingUsage) -> String {
-        switch cooling.state {
-        case .available:
-            return cooling.fans.count == 1 ? "1 个风扇" : "\(cooling.fans.count) 个风扇"
-        case .fanless:
-            return "无风扇机型"
-        case .unavailable:
-            return "风扇遥测不可用"
-        }
-    }
-
     // MARK: - 最近 60 秒
 
     private var historyStart: Date {
@@ -153,8 +176,37 @@ struct SystemDashboardView: View {
                     LineChartPoint(timestamp: $0.timestamp, value: $0.total, series: "CPU", color: .blue)
                 },
                 color: utilizationColor(snapshot.cpu.total / 100),
-                height: 180
+                height: 160
             )
+        }
+    }
+
+    // MARK: - 内存面板
+
+    private func memoryPanel(_ snapshot: SystemSnapshot) -> some View {
+        InfoPanel(title: "内存占用", subtitle: "当前") {
+            VStack(alignment: .leading, spacing: 10) {
+                HStack(alignment: .firstTextBaseline) {
+                    Text(Format.bytes(snapshot.memory.used))
+                        .font(.system(size: 24, weight: .bold, design: .rounded))
+                        .monospacedDigit()
+                    Text("已用 \(Format.percent(snapshot.memory.usedFraction * 100))")
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                    Spacer()
+                }
+                PercentBar(
+                    fraction: snapshot.memory.usedFraction,
+                    color: memoryColor(snapshot.memory.usedFraction)
+                )
+                HStack {
+                    Text("可用 \(Format.bytes(snapshot.memory.available))")
+                    Spacer()
+                    Text("共 \(Format.bytes(snapshot.memory.total))")
+                }
+                .font(.caption)
+                .foregroundStyle(.secondary)
+            }
         }
     }
 
@@ -162,44 +214,43 @@ struct SystemDashboardView: View {
 
     private func powerPanel(_ snapshot: SystemSnapshot) -> some View {
         InfoPanel(title: "功耗活动", subtitle: "最近 60 秒") {
-            HStack(spacing: 24) {
-                ChartLegendValue(
+            VStack(alignment: .leading, spacing: 8) {
+                ChartLegendRow(
                     title: "系统功耗",
                     value: Format.watts(snapshot.power.systemWatts),
                     color: .orange
                 )
-                ChartLegendValue(
+                ChartLegendRow(
                     title: "充电功耗",
                     value: Format.watts(snapshot.power.chargingWatts),
                     color: .green
                 )
                 if snapshot.power.adapterInputWatts != nil {
-                    ChartLegendValue(
+                    ChartLegendRow(
                         title: "适配器输入",
                         value: Format.watts(snapshot.power.adapterInputWatts),
                         color: .secondary
                     )
                 }
-                Spacer(minLength: 0)
             }
 
             // 多序列折线（仅线条，无面积填充，配合安全 y 域避免颜色溢出）
+            let powerPoints = recent(viewModel.powerHistory, keyPath: \.timestamp).flatMap { entry in
+                [
+                    entry.systemWatts.map {
+                        LineChartPoint(timestamp: entry.timestamp, value: $0, series: "系统", color: .orange)
+                    },
+                    entry.chargingWatts.map {
+                        LineChartPoint(timestamp: entry.timestamp, value: $0, series: "充电", color: .green)
+                    },
+                ].compactMap { $0 }
+            }
             PerformanceLineChart(
-                points: recent(viewModel.powerHistory, keyPath: \.timestamp).flatMap { entry in
-                    [
-                        entry.systemWatts.map {
-                            LineChartPoint(timestamp: entry.timestamp, value: $0, series: "系统", color: .orange)
-                        },
-                        entry.chargingWatts.map {
-                            LineChartPoint(timestamp: entry.timestamp, value: $0, series: "充电", color: .green)
-                        },
-                    ].compactMap { $0 }
-                },
+                points: powerPoints,
                 yDomain: PerformanceLineChart.safeDomain(
-                    values: recent(viewModel.powerHistory, keyPath: \.timestamp).compactMap(\.systemWatts)
-                        + recent(viewModel.powerHistory, keyPath: \.timestamp).compactMap(\.chargingWatts)
+                    values: powerPoints.map(\.value)
                 ),
-                height: 180
+                height: 160
             )
         }
     }
@@ -225,6 +276,18 @@ struct SystemDashboardView: View {
                 ),
                 height: 160
             )
+            HStack(spacing: 12) {
+                ChartLegendRow(
+                    title: "电池",
+                    value: Format.celsius(snapshot.temperature.batteryCelsius),
+                    color: .secondary
+                )
+                ChartLegendRow(
+                    title: "存储",
+                    value: Format.celsius(snapshot.temperature.storageCelsius),
+                    color: .secondary
+                )
+            }
         }
     }
 
@@ -249,7 +312,7 @@ struct SystemDashboardView: View {
                     yDomain: PerformanceLineChart.safeDomain(
                         values: fanPoints.map(\.value), floor: 1_000
                     ),
-                    height: 160
+                    height: 140
                 )
 
                 Divider()
@@ -270,33 +333,25 @@ struct SystemDashboardView: View {
         }
     }
 
+    /// 窄列布局：每个风扇一行「名称 + 当前转速」，下方一行最低/目标/最高
     private func fanDetails(_ cooling: CoolingUsage) -> some View {
-        VStack(spacing: 0) {
-            ForEach(Array(cooling.fans.enumerated()), id: \.element.id) { index, fan in
-                if index > 0 { Divider() }
-                HStack(spacing: 16) {
-                    Label(fan.name, systemImage: "fan")
-                        .frame(maxWidth: .infinity, alignment: .leading)
-                    fanDetailValue("当前", value: fan.currentRPM)
-                    fanDetailValue("最低", value: fan.minimumRPM)
-                    fanDetailValue("目标", value: fan.targetRPM)
-                    fanDetailValue("最高", value: fan.maximumRPM)
+        VStack(alignment: .leading, spacing: 8) {
+            ForEach(cooling.fans) { fan in
+                VStack(alignment: .leading, spacing: 2) {
+                    HStack {
+                        Label(fan.name, systemImage: "fan")
+                            .font(.subheadline)
+                        Spacer()
+                        Text(Format.rpm(fan.currentRPM))
+                            .font(.subheadline.weight(.semibold))
+                            .monospacedDigit()
+                    }
+                    Text("最低 \(Format.rpm(fan.minimumRPM)) · 目标 \(Format.rpm(fan.targetRPM)) · 最高 \(Format.rpm(fan.maximumRPM))")
+                        .font(.caption2)
+                        .foregroundStyle(.secondary)
                 }
-                .frame(minHeight: 52)
             }
         }
-    }
-
-    private func fanDetailValue(_ title: String, value: Double?) -> some View {
-        VStack(alignment: .trailing, spacing: 2) {
-            Text(title)
-                .font(.caption)
-                .foregroundStyle(.secondary)
-            Text(Format.rpm(value))
-                .font(.subheadline)
-                .monospacedDigit()
-        }
-        .frame(minWidth: 86, alignment: .trailing)
     }
 
     private func capabilityView(systemImage: String, title: String, message: String) -> some View {
@@ -316,64 +371,21 @@ struct SystemDashboardView: View {
 
     private static let fanChartColors: [Color] = [.blue, .teal, .indigo, .cyan]
 
-    // MARK: - 内存面板
-
-    private func memoryPanel(_ snapshot: SystemSnapshot) -> some View {
-        InfoPanel(title: "内存占用", subtitle: "当前") {
-            VStack(alignment: .leading, spacing: 10) {
-                HStack(alignment: .firstTextBaseline) {
-                    Text(Format.bytes(snapshot.memory.used))
-                        .font(.system(size: 26, weight: .bold, design: .rounded))
-                        .monospacedDigit()
-                    Text("已用 · \(Format.percent(snapshot.memory.usedFraction * 100))")
-                        .font(.caption)
-                        .foregroundStyle(.secondary)
-                    Spacer()
-                    Text("共 \(Format.bytes(snapshot.memory.total))")
-                        .font(.caption)
-                        .foregroundStyle(.secondary)
-                }
-                PercentBar(
-                    fraction: snapshot.memory.usedFraction,
-                    color: memoryColor(snapshot.memory.usedFraction)
-                )
-                HStack {
-                    Text("可用 \(Format.bytes(snapshot.memory.available))")
-                        .foregroundStyle(.secondary)
-                    Spacer()
-                    Text("压缩 / 活动内存等详细数据由系统管理")
-                        .font(.caption2)
-                        .foregroundStyle(.tertiary)
-                }
-                .font(.caption)
-            }
-        }
-    }
-
-    private func memoryColor(_ fraction: Double) -> Color {
-        switch fraction {
-        case ..<0.6: return .blue
-        case ..<0.85: return .orange
-        default: return .red
-        }
-    }
-
     // MARK: - 网络面板
 
     private func networkPanel(_ snapshot: SystemSnapshot) -> some View {
         InfoPanel(title: "网络活动", subtitle: "最近 60 秒") {
-            HStack(spacing: 24) {
-                ChartLegendValue(
+            VStack(alignment: .leading, spacing: 8) {
+                ChartLegendRow(
                     title: "下载",
                     value: Format.rate(snapshot.network.downloadRate),
                     color: .blue
                 )
-                ChartLegendValue(
+                ChartLegendRow(
                     title: "上传",
                     value: Format.rate(snapshot.network.uploadRate),
                     color: .green
                 )
-                Spacer(minLength: 0)
             }
 
             let networkPoints = recent(viewModel.networkHistory, keyPath: \.timestamp).flatMap { entry in
@@ -397,11 +409,13 @@ struct SystemDashboardView: View {
                 yDomain: PerformanceLineChart.safeDomain(
                     values: networkPoints.map(\.value), floor: 0.1
                 ),
-                height: 160
+                height: 150
             )
-            Text("速率单位：MB/s · 累计下载 \(Format.bytes(snapshot.network.downloadTotal)) · 累计上传 \(Format.bytes(snapshot.network.uploadTotal))")
+            Text("速率单位：MB/s · 累计 ↓\(Format.bytes(snapshot.network.downloadTotal)) · ↑\(Format.bytes(snapshot.network.uploadTotal))")
                 .font(.caption2)
                 .foregroundStyle(.tertiary)
+                .lineLimit(1)
+                .minimumScaleFactor(0.8)
         }
     }
 
@@ -412,37 +426,33 @@ struct SystemDashboardView: View {
             VStack(alignment: .leading, spacing: 10) {
                 HStack(alignment: .firstTextBaseline) {
                     Text(Format.bytes(snapshot.disk.used))
-                        .font(.system(size: 26, weight: .bold, design: .rounded))
+                        .font(.system(size: 24, weight: .bold, design: .rounded))
                         .monospacedDigit()
-                    Text("已用 · \(Format.percent(snapshot.disk.usedFraction * 100))")
+                    Text("已用 \(Format.percent(snapshot.disk.usedFraction * 100))")
                         .font(.caption)
                         .foregroundStyle(.secondary)
                     Spacer()
-                    Text("共 \(Format.bytes(snapshot.disk.total))")
-                        .font(.caption)
-                        .foregroundStyle(.secondary)
                 }
                 PercentBar(
                     fraction: snapshot.disk.usedFraction,
                     color: diskColor(snapshot.disk.usedFraction)
                 )
-                HStack(spacing: 20) {
+                HStack(spacing: 16) {
                     Label("读 \(Format.rate(snapshot.disk.readRate))", systemImage: "arrow.down")
                     Label("写 \(Format.rate(snapshot.disk.writeRate))", systemImage: "arrow.up")
-                    Spacer()
+                }
+                .font(.caption)
+                .foregroundStyle(.secondary)
+                .lineLimit(1)
+                .minimumScaleFactor(0.8)
+                HStack {
                     Text("可用 \(Format.bytes(snapshot.disk.available))")
+                    Spacer()
+                    Text("共 \(Format.bytes(snapshot.disk.total))")
                 }
                 .font(.caption)
                 .foregroundStyle(.secondary)
             }
-        }
-    }
-
-    private func diskColor(_ fraction: Double) -> Color {
-        switch fraction {
-        case ..<0.7: return .blue
-        case ..<0.9: return .orange
-        default: return .red
         }
     }
 
@@ -451,9 +461,9 @@ struct SystemDashboardView: View {
     private func batteryPanel(_ snapshot: SystemSnapshot) -> some View {
         InfoPanel(title: "电池", subtitle: batterySubtitle(snapshot.battery)) {
             if let percent = snapshot.battery.percent {
-                HStack(spacing: 20) {
+                HStack(spacing: 10) {
                     batteryGauge(
-                        title: "当前电量",
+                        title: "电量",
                         systemImage: batterySymbol(snapshot.battery),
                         value: percent / 100,
                         valueText: String(format: "%.0f%%", percent),
@@ -467,13 +477,12 @@ struct SystemDashboardView: View {
                         tint: snapshot.battery.healthPercent.map { healthColor($0) } ?? .secondary
                     )
                     batteryGauge(
-                        title: "循环次数",
+                        title: "循环",
                         systemImage: "arrow.triangle.2.circlepath",
                         value: nil,
                         valueText: snapshot.battery.cycleCount.map(String.init) ?? "—",
                         tint: .secondary
                     )
-                    Spacer(minLength: 0)
                 }
 
                 Divider()
@@ -487,9 +496,6 @@ struct SystemDashboardView: View {
                     Divider()
                     batteryDetailRow("电压", systemImage: "waveform.path",
                         value: snapshot.battery.voltageMillivolts.map { String(format: "%.2f V", Double($0) / 1_000) } ?? "—")
-                    Divider()
-                    batteryDetailRow("电流", systemImage: "bolt.badge.a",
-                        value: snapshot.battery.amperageMilliamps.map { "\($0) mA" } ?? "—")
                     Divider()
                     batteryDetailRow("温度", systemImage: "thermometer.medium",
                         value: Format.celsius(snapshot.temperature.batteryCelsius))
@@ -536,7 +542,7 @@ struct SystemDashboardView: View {
         valueText: String,
         tint: Color
     ) -> some View {
-        VStack(spacing: 6) {
+        VStack(spacing: 4) {
             Gauge(value: min(1, max(0, value ?? 0))) {
                 Label(title, systemImage: systemImage)
             } currentValueLabel: {
@@ -547,11 +553,13 @@ struct SystemDashboardView: View {
             .gaugeStyle(.accessoryCircularCapacity)
             .tint(value == nil ? .secondary : tint)
             .controlSize(.large)
-            .scaleEffect(1.1)
-            .frame(width: 96, height: 88)
+            .scaleEffect(0.95)
+            .frame(width: 82, height: 74)
 
             Text(title)
-                .font(.subheadline.weight(.semibold))
+                .font(.caption.weight(.medium))
+                .lineLimit(1)
+                .minimumScaleFactor(0.8)
         }
         .frame(maxWidth: .infinity)
     }
@@ -566,6 +574,6 @@ struct SystemDashboardView: View {
                 .lineLimit(1)
                 .minimumScaleFactor(0.8)
         }
-        .frame(minHeight: 34)
+        .frame(minHeight: 32)
     }
 }
