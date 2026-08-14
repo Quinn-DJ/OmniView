@@ -67,6 +67,7 @@ enum CoolingState {
 }
 
 struct CoolingUsage {
+    let timestamp: Date = .now
     let state: CoolingState
     let fans: [FanReading]
 
@@ -78,6 +79,7 @@ enum ThermalStatus {
 }
 
 struct TemperatureUsage {
+    let timestamp: Date = .now
     let socCelsius: Double?
     let batteryCelsius: Double?
     let storageCelsius: Double?
@@ -119,11 +121,74 @@ struct SystemSnapshot {
 
 // MARK: - 硬件信息
 
+enum HardwareThermalState: String {
+    case nominal = "正常"
+    case fair = "偏高"
+    case serious = "较高"
+    case critical = "严重"
+    case unknown = "不可用"
+}
+
+struct HardwareDisplayInfo: Identifiable {
+    let id: String
+    let name: String
+    let resolution: String        // 逻辑分辨率
+    let pixelResolution: String   // 物理像素分辨率
+    let isBuiltIn: Bool
+    let isMain: Bool
+}
+
+struct HardwareUSBDevice: Identifiable {
+    let id: String
+    let name: String
+    let manufacturer: String
+    let speed: String
+    let productID: String
+    let vendorID: String
+}
+
+struct HardwareBluetoothDevice: Identifiable {
+    let id: String
+    let name: String
+    let type: String
+    let signal: Int?
+}
+
+struct HardwareBluetoothInfo {
+    let isAvailable: Bool
+    let isPoweredOn: Bool
+    let chipset: String
+    let connectedDevices: [HardwareBluetoothDevice]
+
+    static let unavailable = HardwareBluetoothInfo(
+        isAvailable: false, isPoweredOn: false, chipset: "—", connectedDevices: []
+    )
+}
+
+struct HardwareWiFiInfo {
+    let isAvailable: Bool
+    let isPoweredOn: Bool
+    let interfaceName: String
+    let ssid: String?
+    let signalDBm: Int?
+    let transmitRateMbps: Double?
+    let channel: Int?
+
+    static let unavailable = HardwareWiFiInfo(
+        isAvailable: false, isPoweredOn: false, interfaceName: "—",
+        ssid: nil, signalDBm: nil, transmitRateMbps: nil, channel: nil
+    )
+}
+
 struct HardwareInfo {
     let modelName: String          // e.g. "MacBook Pro"
     let modelIdentifier: String    // e.g. "MacBookPro18,3"
     let chip: String               // e.g. "Apple M1 Pro"
-    let cpuCores: Int
+    let architecture: String       // e.g. "arm64"
+    let physicalCores: Int
+    let logicalCores: Int
+    let performanceCores: Int?
+    let efficiencyCores: Int?
     let memoryBytes: UInt64
     let macOSVersion: String
     let macOSBuild: String
@@ -134,6 +199,19 @@ struct HardwareInfo {
     let graphics: String
     let kernelVersion: String
     let systemUptime: TimeInterval
+    let thermalState: HardwareThermalState
+    let displays: [HardwareDisplayInfo]
+    let usbDevices: [HardwareUSBDevice]
+    let bluetooth: HardwareBluetoothInfo
+    let wifi: HardwareWiFiInfo
+
+    var coreSummary: String {
+        var summary = "\(physicalCores) 物理 · \(logicalCores) 逻辑"
+        if let performance = performanceCores, let efficiency = efficiencyCores {
+            summary += " · \(performance) 性能 · \(efficiency) 能效"
+        }
+        return summary
+    }
 }
 
 // MARK: - 格式辅助

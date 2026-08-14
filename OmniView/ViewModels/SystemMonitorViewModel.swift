@@ -2,6 +2,7 @@ import Combine
 import Foundation
 
 /// 系统监控视图模型：定时采样并维护历史曲线数据
+@MainActor
 final class SystemMonitorViewModel: ObservableObject {
     @Published var snapshot: SystemSnapshot?
     @Published var hardware: HardwareInfo?
@@ -13,6 +14,7 @@ final class SystemMonitorViewModel: ObservableObject {
     @Published private(set) var networkHistory: [NetworkUsage] = []
     @Published private(set) var powerHistory: [PowerUsage] = []
     @Published private(set) var temperatureHistory: [TemperatureUsage] = []
+    @Published private(set) var coolingHistory: [CoolingUsage] = []
 
     let maxHistoryCount = 900
     let sampleInterval: TimeInterval = 2.0
@@ -64,6 +66,11 @@ final class SystemMonitorViewModel: ObservableObject {
         temperatureHistory.append(result.temperature)
         if temperatureHistory.count > maxHistoryCount {
             temperatureHistory.removeFirst(temperatureHistory.count - maxHistoryCount)
+        }
+
+        coolingHistory.append(result.cooling)
+        if coolingHistory.count > maxHistoryCount {
+            coolingHistory.removeFirst(coolingHistory.count - maxHistoryCount)
         }
     }
 }

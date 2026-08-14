@@ -1,93 +1,294 @@
+import AppKit
 import SwiftUI
 
 /// 系统信息视图
+/// 布局与内容丰富度参考 mac-scope 的「系统信息」页：
+/// 设备头部 + 分组表单（Mac / 处理器与内存 / 存储 / 显示器 / USB / 蓝牙 / Wi-Fi）
 struct SystemInfoView: View {
     @EnvironmentObject private var viewModel: SystemMonitorViewModel
 
     var body: some View {
         ScrollView {
-            VStack(alignment: .leading, spacing: 16) {
+            VStack(spacing: 14) {
                 if let hardware = viewModel.hardware {
-                    infoCard(hardware)
+                    deviceHeader(hardware)
+                    hardwareList(hardware)
                 } else {
                     ProgressView("正在读取系统信息…")
-                        .frame(maxWidth: .infinity, minHeight: 200)
+                        .frame(maxWidth: .infinity, minHeight: 300)
                 }
             }
-            .padding(16)
+            .frame(maxWidth: 880)
+            .frame(maxWidth: .infinity)
+            .padding(.horizontal, 24)
+            .padding(.bottom, 28)
         }
         .navigationTitle("系统信息")
         .toolbar {
-            ToolbarItem(placement: .primaryAction) {
+            ToolbarItemGroup(placement: .primaryAction) {
+                Button(action: copySummary) {
+                    Label("复制摘要", systemImage: "doc.on.doc")
+                }
+                .help("复制摘要")
+                .disabled(viewModel.hardware == nil)
+
                 Button {
                     viewModel.refreshHardware()
                 } label: {
                     Label("刷新", systemImage: "arrow.clockwise")
                 }
+                .help("刷新")
             }
         }
     }
 
-    private func infoCard(_ hardware: HardwareInfo) -> some View {
-        VStack(alignment: .leading, spacing: 0) {
-            // 概览头部
-            HStack(spacing: 14) {
-                Image(systemName: "macbook")
-                    .font(.system(size: 40))
-                    .foregroundStyle(.tint)
-                VStack(alignment: .leading, spacing: 2) {
-                    Text(hardware.modelName)
-                        .font(.title3.weight(.bold))
-                    Text(hardware.modelIdentifier)
-                        .font(.caption)
-                        .foregroundStyle(.secondary)
-                }
-                Spacer()
-            }
-            .padding(16)
+    // MARK: - 设备头部
 
-            Divider()
+    private func deviceHeader(_ hardware: HardwareInfo) -> some View {
+        VStack(spacing: 6) {
+            Image(systemName: "macbook")
+                .font(.system(size: 52, weight: .light))
+                .foregroundStyle(.secondary)
+                .frame(width: 210, height: 120)
+                .accessibilityHidden(true)
 
-            Group {
-                row("芯片", hardware.chip, icon: "cpu")
-                row("核心数", "\(hardware.cpuCores)", icon: "square.grid.3x3")
-                row("内存", Format.bytes(hardware.memoryBytes), icon: "memorychip")
-                row("图形处理器", hardware.graphics, icon: "gpu")
-                row("macOS", "\(hardware.macOSVersion) (\(hardware.macOSBuild))", icon: "apple.logo")
-                row("内核", hardware.kernelVersion, icon: "terminal")
-                row("序列号", hardware.serialNumber, icon: "number")
-                row("启动磁盘", hardware.bootVolumeName ?? "—", icon: "internaldrive")
-                row("存储总量", Format.bytes(hardware.storageTotal), icon: "externaldrive")
-                row("存储可用", Format.bytes(hardware.storageAvailable), icon: "externaldrive.badge.checkmark")
-                row("运行时间", Format.time(hardware.systemUptime), icon: "timer")
-            }
-            .padding(.horizontal, 16)
+            Text(hardware.modelName)
+                .font(.title2.weight(.semibold))
+
+            Text("\(hardware.chip) · \(Format.bytes(hardware.memoryBytes))")
+                .font(.subheadline)
+                .foregroundStyle(.secondary)
+                .monospacedDigit()
         }
-        .background(
-            RoundedRectangle(cornerRadius: 12)
-                .fill(Color.primary.opacity(0.04))
-        )
-        .overlay(
-            RoundedRectangle(cornerRadius: 12)
+        .frame(maxWidth: .infinity, minHeight: 190)
+        .padding(.horizontal, 28)
+        .padding(.vertical, 14)
+        .background(Color(nsColor: .controlBackgroundColor))
+        .clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
+        .overlay {
+            RoundedRectangle(cornerRadius: 12, style: .continuous)
                 .stroke(Color.primary.opacity(0.06), lineWidth: 1)
-        )
+        }
+        .accessibilityElement(children: .combine)
     }
 
-    private func row(_ label: String, _ value: String, icon: String) -> some View {
-        HStack(spacing: 10) {
-            Image(systemName: icon)
-                .font(.caption)
-                .foregroundStyle(.secondary)
-                .frame(width: 18)
-            Text(label)
-                .font(.callout)
-                .foregroundStyle(.secondary)
-                .frame(width: 90, alignment: .leading)
-            Text(value)
-                .font(.callout.weight(.medium))
-                .textSelection(.enabled)
-            Spacer()
+    // MARK: - 分组列表
+
+    private func hardwareList(_ hardware: HardwareInfo) -> some View {
+        Form {
+            Section("Mac") {
+                infoRow("型号", value: hardware.modelName, systemImage: "laptopcomputer")
+                infoRow("型号标识符", value: hardware.modelIdentifier, systemImage: "number")
+                infoRow("macOS", value: "\(hardware.macOSVersion) (\(hardware.macOSBuild))", systemImage: "apple.logo")
+                infoRow("内核", value: hardware.kernelVersion, systemImage: "terminal")
+                infoRow("运行时间", value: Format.time(hardware.systemUptime), systemImage: "clock")
+                statusRow(
+                    "热状态",
+                    value: hardware.thermalState.rawValue,
+                    systemImage: "thermometer.medium",
+                    color: thermalColor(hardware.thermalState)
+                )
+            }
+
+            Section("处理器与内存") {
+                infoRow("芯片", value: hardware.chip, systemImage: "cpu")
+                infoRow("架构", value: hardware.architecture, systemImage: "terminal")
+                infoRow("CPU 核心", value: hardware.coreSummary, systemImage: "circle.grid.3x3")
+                infoRow("内存", value: Format.bytes(hardware.memoryBytes), systemImage: "memorychip")
+                infoRow("图形处理器", value: hardware.graphics, systemImage: "gpu")
+            }
+
+            Section("存储") {
+                infoRow("总容量", value: Format.bytes(hardware.storageTotal), systemImage: "internaldrive")
+                infoRow("可用空间", value: Format.bytes(hardware.storageAvailable), systemImage: "internaldrive.fill")
+                infoRow("启动磁盘", value: hardware.bootVolumeName ?? "—", systemImage: "folder")
+                infoRow("序列号", value: hardware.serialNumber, systemImage: "number.square")
+            }
+
+            Section("显示器") {
+                if hardware.displays.isEmpty {
+                    unavailableRow("未获取到显示器信息。")
+                } else {
+                    ForEach(hardware.displays) { display in
+                        HStack(spacing: 12) {
+                            Image(systemName: display.isBuiltIn ? "laptopcomputer" : "display")
+                                .foregroundStyle(.secondary)
+                                .frame(width: 22)
+                            VStack(alignment: .leading, spacing: 2) {
+                                HStack(spacing: 6) {
+                                    Text(display.name)
+                                    if display.isMain {
+                                        Text("主显示器")
+                                            .font(.caption)
+                                            .foregroundStyle(.secondary)
+                                    }
+                                    if display.isBuiltIn {
+                                        Text("内建")
+                                            .font(.caption)
+                                            .foregroundStyle(.secondary)
+                                    }
+                                }
+                                Text("\(display.resolution) · \(display.pixelResolution)")
+                                    .font(.caption)
+                                    .foregroundStyle(.secondary)
+                            }
+                        }
+                    }
+                }
+            }
+
+            Section("USB") {
+                if hardware.usbDevices.isEmpty {
+                    unavailableRow("当前未检测到 USB 设备。")
+                } else {
+                    ForEach(hardware.usbDevices) { device in
+                        HStack(spacing: 12) {
+                            Image(systemName: "cable.connector")
+                                .foregroundStyle(.secondary)
+                                .frame(width: 22)
+                            VStack(alignment: .leading, spacing: 2) {
+                                Text(device.name)
+                                Text(usbDetail(device))
+                                    .font(.caption)
+                                    .foregroundStyle(.secondary)
+                            }
+                        }
+                    }
+                }
+            }
+
+            Section("蓝牙") {
+                statusRow(
+                    "状态",
+                    value: connectionStatus(
+                        isAvailable: hardware.bluetooth.isAvailable,
+                        isPoweredOn: hardware.bluetooth.isPoweredOn
+                    ),
+                    systemImage: "wave.3.right",
+                    color: hardware.bluetooth.isPoweredOn ? .green : .secondary
+                )
+                if hardware.bluetooth.isAvailable {
+                    infoRow("控制器", value: hardware.bluetooth.chipset, systemImage: "dot.radiowaves.left.and.right")
+                }
+                if hardware.bluetooth.connectedDevices.isEmpty {
+                    unavailableRow("当前没有已连接的蓝牙设备。")
+                } else {
+                    ForEach(hardware.bluetooth.connectedDevices) { device in
+                        HStack(spacing: 12) {
+                            Image(systemName: "headphones")
+                                .foregroundStyle(.secondary)
+                                .frame(width: 22)
+                            VStack(alignment: .leading, spacing: 2) {
+                                Text(device.name)
+                                Text(bluetoothDetail(device))
+                                    .font(.caption)
+                                    .foregroundStyle(.secondary)
+                            }
+                        }
+                    }
+                }
+            }
+
+            Section("Wi-Fi") {
+                statusRow(
+                    "状态",
+                    value: connectionStatus(
+                        isAvailable: hardware.wifi.isAvailable,
+                        isPoweredOn: hardware.wifi.isPoweredOn
+                    ),
+                    systemImage: "wifi",
+                    color: hardware.wifi.isPoweredOn ? .green : .secondary
+                )
+                if hardware.wifi.isAvailable {
+                    infoRow("接口", value: hardware.wifi.interfaceName, systemImage: "network")
+                    infoRow("网络", value: hardware.wifi.ssid ?? "不可用", systemImage: "wifi")
+                    if let signal = hardware.wifi.signalDBm {
+                        infoRow("信号强度", value: "\(signal) dBm", systemImage: "chart.bar")
+                    }
+                    if let rate = hardware.wifi.transmitRateMbps {
+                        infoRow("传输速率", value: String(format: "%.0f Mbps", rate), systemImage: "arrow.up.arrow.down")
+                    }
+                    if let channel = hardware.wifi.channel {
+                        infoRow("频道", value: String(channel), systemImage: "antenna.radiowaves.left.and.right")
+                    }
+                }
+            }
         }
-        .padding(.vertical, 7)
+        .formStyle(.grouped)
+    }
+
+    // MARK: - 行组件
+
+    private func infoRow(_ title: String, value: String, systemImage: String) -> some View {
+        LabeledContent {
+            Text(value)
+                .foregroundStyle(.secondary)
+                .textSelection(.enabled)
+        } label: {
+            Label(title, systemImage: systemImage)
+        }
+    }
+
+    private func statusRow(_ title: String, value: String, systemImage: String, color: Color) -> some View {
+        LabeledContent {
+            Text(value)
+                .foregroundStyle(color)
+        } label: {
+            Label(title, systemImage: systemImage)
+        }
+    }
+
+    private func unavailableRow(_ message: String) -> some View {
+        Text(message)
+            .font(.subheadline)
+            .foregroundStyle(.secondary)
+    }
+
+    // MARK: - 辅助
+
+    private func thermalColor(_ state: HardwareThermalState) -> Color {
+        switch state {
+        case .nominal: return .green
+        case .fair: return .yellow
+        case .serious: return .orange
+        case .critical: return .red
+        case .unknown: return .secondary
+        }
+    }
+
+    private func connectionStatus(isAvailable: Bool, isPoweredOn: Bool) -> String {
+        guard isAvailable else { return "不可用" }
+        return isPoweredOn ? "已开启" : "已关闭"
+    }
+
+    private func usbDetail(_ device: HardwareUSBDevice) -> String {
+        [device.manufacturer, device.speed, device.productID, device.vendorID]
+            .filter { $0 != "-" && $0 != "—" }
+            .joined(separator: " · ")
+    }
+
+    private func bluetoothDetail(_ device: HardwareBluetoothDevice) -> String {
+        var values = device.type == "—" ? [] : [device.type]
+        if let signal = device.signal {
+            values.append("\(signal) dBm")
+        }
+        return values.isEmpty ? "已连接" : values.joined(separator: " · ")
+    }
+
+    private func copySummary() {
+        guard let hardware = viewModel.hardware else { return }
+        let lines = [
+            "OmniView 0.1.0",
+            "型号：\(hardware.modelName) (\(hardware.modelIdentifier))",
+            "芯片：\(hardware.chip)",
+            "CPU 核心：\(hardware.coreSummary)",
+            "内存：\(Format.bytes(hardware.memoryBytes))",
+            "macOS：\(hardware.macOSVersion) (\(hardware.macOSBuild))",
+            "显示器：\(hardware.displays.map(\.name).joined(separator: ", "))",
+            "Wi-Fi：\(hardware.wifi.isPoweredOn ? "已开启" : "已关闭")",
+            "蓝牙：\(hardware.bluetooth.isPoweredOn ? "已开启" : "已关闭")",
+        ]
+        NSPasteboard.general.clearContents()
+        NSPasteboard.general.setString(lines.joined(separator: "\n"), forType: .string)
     }
 }

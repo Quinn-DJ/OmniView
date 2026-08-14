@@ -1,100 +1,208 @@
 import Charts
 import SwiftUI
 
-// MARK: - 通用仪表卡片
+// MARK: - 状态指标卡（参考 mac-scope 的 PerformanceStatusMetric）
 
-struct MetricCard<Content: View>: View {
+struct StatusMetricCard: View {
     let title: String
-    let icon: String
-    @ViewBuilder let content: Content
+    let systemImage: String
+    let value: String
+    let detail: String
+    let indicatorColor: Color
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 8) {
-            HStack(spacing: 6) {
-                Image(systemName: icon)
-                    .font(.caption)
-                    .foregroundStyle(.tint)
+        HStack(spacing: 12) {
+            Image(systemName: systemImage)
+                .font(.system(size: 17, weight: .medium))
+                .foregroundStyle(indicatorColor)
+                .frame(width: 26, height: 26)
+
+            VStack(alignment: .leading, spacing: 3) {
                 Text(title)
-                    .font(.caption.weight(.semibold))
+                    .font(.caption)
                     .foregroundStyle(.secondary)
+                Text(value)
+                    .font(.title3.weight(.semibold))
+                    .monospacedDigit()
+                    .lineLimit(1)
+                    .minimumScaleFactor(0.7)
+                Text(detail)
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+                    .lineLimit(1)
+                    .minimumScaleFactor(0.8)
+            }
+        }
+        .frame(maxWidth: .infinity, minHeight: 82, alignment: .leading)
+        .padding(14)
+        .background(Color(nsColor: .controlBackgroundColor))
+        .clipShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
+    }
+}
+
+// MARK: - 面板（参考 mac-scope 的 PerformancePanel）
+
+struct InfoPanel<Content: View>: View {
+    let title: String
+    let subtitle: String
+    @ViewBuilder let content: Content
+
+    init(title: String, subtitle: String = "", @ViewBuilder content: () -> Content) {
+        self.title = title
+        self.subtitle = subtitle
+        self.content = content()
+    }
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 14) {
+            HStack(alignment: .firstTextBaseline) {
+                Text(title)
+                    .font(.headline)
                 Spacer()
+                Text(subtitle)
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
             }
             content
         }
-        .padding(12)
-        .background(
-            RoundedRectangle(cornerRadius: 12)
-                .fill(Color.primary.opacity(0.04))
-        )
-        .overlay(
-            RoundedRectangle(cornerRadius: 12)
-                .stroke(Color.primary.opacity(0.06), lineWidth: 1)
-        )
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .padding(18)
+        .background(Color(nsColor: .controlBackgroundColor))
+        .clipShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
     }
 }
 
-// MARK: - 环形仪表
+// MARK: - 图表图例值（参考 mac-scope 的 ChartLegendValue）
 
-struct RingGauge: View {
-    let value: Double          // 0-1
-    let displayValue: String
-    let unit: String
-    var color: Color = .blue
-    var gradient: LinearGradient? = nil
+struct ChartLegendValue: View {
+    let title: String
+    let value: String
+    let color: Color
 
     var body: some View {
-        VStack(spacing: 4) {
-            ZStack {
-                Circle()
-                    .stroke(Color.primary.opacity(0.08), lineWidth: 8)
-                Circle()
-                    .trim(from: 0, to: max(0.01, min(1, value)))
-                    .stroke(
-                        gradient ?? LinearGradient(
-                            colors: [color.opacity(0.7), color],
-                            startPoint: .leading, endPoint: .trailing
-                        ),
-                        style: StrokeStyle(lineWidth: 8, lineCap: .round)
-                    )
-                    .rotationEffect(.degrees(-90))
-                    .animation(.easeOut(duration: 0.4), value: value)
-                VStack(spacing: 0) {
-                    Text(displayValue)
-                        .font(.system(size: 20, weight: .bold, design: .rounded))
-                        .monospacedDigit()
-                    Text(unit)
-                        .font(.system(size: 10))
-                        .foregroundStyle(.secondary)
-                }
+        HStack(spacing: 7) {
+            Circle()
+                .fill(color)
+                .frame(width: 7, height: 7)
+            VStack(alignment: .leading, spacing: 2) {
+                Text(title)
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+                Text(value)
+                    .font(.subheadline.weight(.semibold))
+                    .monospacedDigit()
             }
-            .frame(width: 92, height: 92)
         }
     }
 }
 
-// MARK: - 迷你趋势图
+// MARK: - 折线图（带安全 y 域，避免颜色溢出）
 
-struct MiniLineChart: View {
-    struct Point: Identifiable {
-        let id = UUID()
-        let timestamp: Date
-        let value: Double
+/// 图表点（多序列）
+struct LineChartPoint: Identifiable {
+    enum Series: String {
+        case system = "系统"
+        case charging = "充电"
+        case download = "下载"
+        case upload = "上传"
+        case fan = "风扇"
+
+        var color: Color {
+            switch self {
+            case .system: return .orange
+            case .charging: return .green
+            case .download: return .blue
+            case .upload: return .green
+            case .fan: return .teal
+            }
+        }
     }
 
-    let points: [Point]
-    var color: Color = .blue
-    var baseline: Double = 0
+    let timestamp: Date
+    let value: Double
+    let series: String
+    let color: Color
+
+    var id: String { "\(timestamp.timeIntervalSinceReferenceDate):\(series)" }
+}
+
+/// 性能面板图表：多序列折线，y 域带安全下限与上浮，避免面积/线条溢出
+struct PerformanceLineChart: View {
+    let points: [LineChartPoint]
+    var yDomain: ClosedRange<Double>? = nil
+    var height: CGFloat = 180
+    var showYAxis = true
+    var colorBySeries = true
 
     var body: some View {
         if points.count < 2 {
-            RoundedRectangle(cornerRadius: 6)
-                .fill(color.opacity(0.1))
-                .frame(height: 56)
-                .overlay {
-                    Text("采样中…")
-                        .font(.caption2)
-                        .foregroundStyle(.secondary)
+            collectingView(height: height)
+        } else {
+            Chart(points) { point in
+                LineMark(
+                    x: .value("时间", point.timestamp),
+                    y: .value("数值", point.value),
+                    series: .value("序列", point.series)
+                )
+                .foregroundStyle(colorBySeries ? point.color : .blue)
+                .interpolationMethod(.catmullRom)
+                .lineStyle(StrokeStyle(lineWidth: 2, lineCap: .round, lineJoin: .round))
+            }
+            .chartXAxis(.hidden)
+            .chartYAxis {
+                if showYAxis {
+                    AxisMarks(position: .leading)
                 }
+            }
+            .chartYScale(domain: yDomain ?? Self.safeDomain(values: points.map(\.value)))
+            .frame(height: height)
+            .transaction { $0.animation = nil }
+        }
+    }
+
+    /// 安全 y 域：始终非零且有上浮空间（参考 mac-scope：0...max(1, max*1.15)）
+    static func safeDomain(values: [Double], floor: Double = 1, headroom: Double = 1.15) -> ClosedRange<Double> {
+        let maximum = values.max() ?? 0
+        return 0...max(floor, maximum * headroom)
+    }
+
+    /// 带上下留白的 y 域（用于温度等有自然下限的指标）
+    static func paddedDomain(values: [Double], paddingFraction: Double = 0.2, minimumSpan: Double = 1) -> ClosedRange<Double> {
+        let minimum = values.min() ?? 0
+        let maximum = max(minimum + minimumSpan, values.max() ?? minimum + minimumSpan)
+        let padding = max(2, (maximum - minimum) * paddingFraction)
+        return (minimum - padding)...(maximum + padding)
+    }
+
+    func collectingView(height: CGFloat) -> some View {
+        HStack(spacing: 8) {
+            ProgressView()
+                .controlSize(.small)
+            Text("正在收集数据…")
+                .font(.subheadline)
+                .foregroundStyle(.secondary)
+        }
+        .frame(maxWidth: .infinity, minHeight: height)
+    }
+}
+
+// MARK: - 折线 + 面积图（CPU）
+
+struct PerformanceAreaLineChart: View {
+    let points: [LineChartPoint]
+    var color: Color = .blue
+    var height: CGFloat = 180
+
+    var body: some View {
+        if points.count < 2 {
+            HStack(spacing: 8) {
+                ProgressView()
+                    .controlSize(.small)
+                Text("正在收集数据…")
+                    .font(.subheadline)
+                    .foregroundStyle(.secondary)
+            }
+            .frame(maxWidth: .infinity, minHeight: height)
         } else {
             Chart(points) { point in
                 AreaMark(
@@ -102,9 +210,10 @@ struct MiniLineChart: View {
                     y: .value("数值", point.value)
                 )
                 .foregroundStyle(
-                    LinearGradient(
-                        colors: [color.opacity(0.25), color.opacity(0.02)],
-                        startPoint: .top, endPoint: .bottom
+                    .linearGradient(
+                        colors: [color.opacity(0.22), color.opacity(0.02)],
+                        startPoint: .top,
+                        endPoint: .bottom
                     )
                 )
                 LineMark(
@@ -113,12 +222,15 @@ struct MiniLineChart: View {
                 )
                 .foregroundStyle(color)
                 .interpolationMethod(.catmullRom)
-                .lineStyle(StrokeStyle(lineWidth: 1.5))
+                .lineStyle(StrokeStyle(lineWidth: 2, lineCap: .round, lineJoin: .round))
             }
-            .chartYScale(domain: (points.map(\.value).min() ?? baseline)...(points.map(\.value).max() ?? baseline + 1))
             .chartXAxis(.hidden)
-            .chartYAxis(.hidden)
-            .frame(height: 56)
+            .chartYAxis {
+                AxisMarks(position: .leading)
+            }
+            .chartYScale(domain: 0...100)
+            .frame(height: height)
+            .transaction { $0.animation = nil }
         }
     }
 }
