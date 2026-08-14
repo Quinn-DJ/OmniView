@@ -87,8 +87,10 @@ final class CalendarService: ObservableObject {
         }
         let predicate = store.predicateForEvents(withStart: startDate, end: endDate, calendars: watchedCalendars())
         return store.events(matching: predicate).map { event in
-            CalendarEventItem(
-                id: event.eventIdentifier,
+            // 重复事件的不同实例共享 eventIdentifier，拼上开始时间保证唯一
+            let uniqueID = "\(event.eventIdentifier)-\(event.startDate.timeIntervalSince1970)"
+            return CalendarEventItem(
+                id: uniqueID,
                 title: event.title ?? "无标题",
                 location: event.location,
                 notes: event.notes,
