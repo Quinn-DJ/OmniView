@@ -28,6 +28,12 @@
 	<string>NSApplication</string>
 	<key>NSCalendarsUsageDescription</key>
 	<string>OmniView 需要访问您的日历，以展示「Celechron课表」与「个人」日历中的课程与日程。</string>
+	<key>NSBluetoothAlwaysUsageDescription</key>
+	<string>OmniView 需要访问蓝牙状态，以在系统信息中展示蓝牙开关状态与已连接设备。</string>
+	<key>NSBluetoothPeripheralUsageDescription</key>
+	<string>OmniView 需要访问蓝牙状态，以在系统信息中展示蓝牙开关状态与已连接设备。</string>
+	<key>NSLocalNetworkUsageDescription</key>
+	<string>OmniView 需要访问本地网络信息，以监控网络接口的流量状态。</string>
 	<key>NSHumanReadableCopyright</key>
 	<string>Copyright © 2025 Quinn. All rights reserved.</string>
 </dict>

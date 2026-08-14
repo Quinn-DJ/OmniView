@@ -19,7 +19,9 @@
 		719B6D744BB09676B517D995 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60D266445B546166F7297B73 /* ContentView.swift */; };
 		7DCFBA911730EA5E6FB68AD9 /* KeychainStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 83DB1F552D6AA583E2E36575 /* KeychainStore.swift */; };
 		8182A28E498DFC49EE6897FE /* SystemDashboardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 787693AD80AC817694B7D574 /* SystemDashboardView.swift */; };
+		8315CB52CA027AD30A9261E0 /* FormatTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6AB7FA7B3CF6C69ADBD0E057 /* FormatTests.swift */; };
 		961E1554DA81A74F7313D81A /* SystemInfoView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7DD184419DC4A83510F7730C /* SystemInfoView.swift */; };
+		9C7FF9A400F0C21666ACA9EF /* RawRSATests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1C7FEB5ED493D7A7AD0D412F /* RawRSATests.swift */; };
 		A5540130D55AB9F44D5041FB /* OmniViewApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 35110F0BB02F9520DEB3F8C6 /* OmniViewApp.swift */; };
 		A5D941A3A36F674655A6CC2A /* ChartCards.swift in Sources */ = {isa = PBXBuildFile; fileRef = 30E403D92047A0CF936FCD66 /* ChartCards.swift */; };
 		AD07BFE97B558B6478E14681 /* SystemSampler.swift in Sources */ = {isa = PBXBuildFile; fileRef = F88D49EBAD485B9C46A3A95E /* SystemSampler.swift */; };
@@ -27,22 +29,37 @@
 		B6F02EB00D08B3A306D99EA3 /* DeepSeekViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2A8DFBD83D63F5F3FBDF865C /* DeepSeekViewModel.swift */; };
 		BAF6DC7BC173860D1B738A38 /* HomeworkCoursewareViews.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D3EAF776973C6A2C68AC7AB /* HomeworkCoursewareViews.swift */; };
 		C1A3E29139E600609BA3D131 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 3AEE73713828C55A2E8891FF /* Assets.xcassets */; };
+		C1EC035190FAA261AE76F3CB /* DeepSeekModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B720DD8057F7E5E87267AB8A /* DeepSeekModelTests.swift */; };
 		ECE42DD7C457D18E4B430651 /* SystemMetrics.swift in Sources */ = {isa = PBXBuildFile; fileRef = A096E7EFDCCA848B3FBD1F84 /* SystemMetrics.swift */; };
 		F0BC6770C5FDDEB86279985F /* CalendarViews.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC73367D8A4C19F82D1F30DC /* CalendarViews.swift */; };
 		F2FFCA0BBD689A43EDF6C78F /* HardwareInfoService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7BA053E377660A58B3C32E45 /* HardwareInfoService.swift */; };
 		F75DA73F8FBF15913E41B7DC /* CalendarService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8C53610740213437592F8B44 /* CalendarService.swift */; };
+		FC75D125D0DDA91BB2AC179A /* BigUIntTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F29AEA3C21EB06B211ADF57A /* BigUIntTests.swift */; };
 /* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		54AD834B3012B2BD9A83541D /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = A51A8F2BAAE571EF1DB1C8EB /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = A914A1B36477FC399C2D8343;
+			remoteInfo = OmniView;
+		};
+/* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
 		0A5FCF0FF525E91B0ADB99D6 /* OmniView.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = OmniView.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		103EA558C0EC851B42C2FCFD /* SMCReader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SMCReader.swift; sourceTree = "<group>"; };
+		1C7FEB5ED493D7A7AD0D412F /* RawRSATests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RawRSATests.swift; sourceTree = "<group>"; };
 		293B1FA1B25892241FBABC8D /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		2A8DFBD83D63F5F3FBDF865C /* DeepSeekViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeepSeekViewModel.swift; sourceTree = "<group>"; };
 		30E403D92047A0CF936FCD66 /* ChartCards.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChartCards.swift; sourceTree = "<group>"; };
 		35110F0BB02F9520DEB3F8C6 /* OmniViewApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OmniViewApp.swift; sourceTree = "<group>"; };
+		37590ADB9A2A32B760BFE451 /* OmniViewTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = OmniViewTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		3AEE73713828C55A2E8891FF /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		5B3E740C3E1544DDC855AA51 /* SystemMonitorViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SystemMonitorViewModel.swift; sourceTree = "<group>"; };
 		60D266445B546166F7297B73 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
+		6AB7FA7B3CF6C69ADBD0E057 /* FormatTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FormatTests.swift; sourceTree = "<group>"; };
 		6D3EAF776973C6A2C68AC7AB /* HomeworkCoursewareViews.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeworkCoursewareViews.swift; sourceTree = "<group>"; };
 		7103F80D295CEF9CC3F5FB77 /* CalendarViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalendarViewModel.swift; sourceTree = "<group>"; };
 		72AA3176392D8ADD1B13EEF3 /* ZJUService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZJUService.swift; sourceTree = "<group>"; };
@@ -54,12 +71,14 @@
 		9D0759ABDFFCDC0C2BB27B52 /* PowerMetricsReader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PowerMetricsReader.swift; sourceTree = "<group>"; };
 		A096E7EFDCCA848B3FBD1F84 /* SystemMetrics.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SystemMetrics.swift; sourceTree = "<group>"; };
 		AC9C4429617B354C8D4B7A47 /* DeepSeekService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeepSeekService.swift; sourceTree = "<group>"; };
+		B720DD8057F7E5E87267AB8A /* DeepSeekModelTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeepSeekModelTests.swift; sourceTree = "<group>"; };
 		C99A0F5EEA9B54FADD914B6E /* OmniView.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = OmniView.entitlements; sourceTree = "<group>"; };
 		CD20B958F1F9473CE4CDE1B0 /* DeepSeekDashboardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeepSeekDashboardView.swift; sourceTree = "<group>"; };
 		D3858F6EB12559DF3E293138 /* TemperatureReader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TemperatureReader.swift; sourceTree = "<group>"; };
 		D4C3F252161C9CEC430B6F6C /* BigUInt.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BigUInt.swift; sourceTree = "<group>"; };
 		DAAA0F06ED9B4590E0F196B0 /* ZJUViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZJUViewModel.swift; sourceTree = "<group>"; };
 		EC73367D8A4C19F82D1F30DC /* CalendarViews.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalendarViews.swift; sourceTree = "<group>"; };
+		F29AEA3C21EB06B211ADF57A /* BigUIntTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BigUIntTests.swift; sourceTree = "<group>"; };
 		F88D49EBAD485B9C46A3A95E /* SystemSampler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SystemSampler.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -137,6 +156,7 @@
 			isa = PBXGroup;
 			children = (
 				0A5FCF0FF525E91B0ADB99D6 /* OmniView.app */,
+				37590ADB9A2A32B760BFE451 /* OmniViewTests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -147,6 +167,17 @@
 				A096E7EFDCCA848B3FBD1F84 /* SystemMetrics.swift */,
 			);
 			path = Models;
+			sourceTree = "<group>";
+		};
+		A16BD4358F86423D7F4D06C6 /* OmniViewTests */ = {
+			isa = PBXGroup;
+			children = (
+				F29AEA3C21EB06B211ADF57A /* BigUIntTests.swift */,
+				B720DD8057F7E5E87267AB8A /* DeepSeekModelTests.swift */,
+				6AB7FA7B3CF6C69ADBD0E057 /* FormatTests.swift */,
+				1C7FEB5ED493D7A7AD0D412F /* RawRSATests.swift */,
+			);
+			path = OmniViewTests;
 			sourceTree = "<group>";
 		};
 		A475FD25A30B07DCAA431BEF /* OmniView */ = {
@@ -189,6 +220,7 @@
 			isa = PBXGroup;
 			children = (
 				A475FD25A30B07DCAA431BEF /* OmniView */,
+				A16BD4358F86423D7F4D06C6 /* OmniViewTests */,
 				7F74319E2EC11A733828BC34 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -196,6 +228,24 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
+		3CC3EE92D45E26C8C4EF03AB /* OmniViewTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 18620E1A9DADDE20934A9A37 /* Build configuration list for PBXNativeTarget "OmniViewTests" */;
+			buildPhases = (
+				912C88F5839FE6847B9A3863 /* Sources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				84633C756530E5BCC095EEB5 /* PBXTargetDependency */,
+			);
+			name = OmniViewTests;
+			packageProductDependencies = (
+			);
+			productName = OmniViewTests;
+			productReference = 37590ADB9A2A32B760BFE451 /* OmniViewTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
 		A914A1B36477FC399C2D8343 /* OmniView */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = AC70E18232950E52C7B99B94 /* Build configuration list for PBXNativeTarget "OmniView" */;
@@ -223,8 +273,13 @@
 				BuildIndependentTargetsInParallel = YES;
 				LastUpgradeCheck = 1430;
 				TargetAttributes = {
+					3CC3EE92D45E26C8C4EF03AB = {
+						DevelopmentTeam = "";
+						ProvisioningStyle = Manual;
+					};
 					A914A1B36477FC399C2D8343 = {
 						DevelopmentTeam = "";
+						ProvisioningStyle = Manual;
 					};
 				};
 			};
@@ -243,6 +298,7 @@
 			projectRoot = "";
 			targets = (
 				A914A1B36477FC399C2D8343 /* OmniView */,
+				3CC3EE92D45E26C8C4EF03AB /* OmniViewTests */,
 			);
 		};
 /* End PBXProject section */
@@ -259,6 +315,17 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
+		912C88F5839FE6847B9A3863 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				FC75D125D0DDA91BB2AC179A /* BigUIntTests.swift in Sources */,
+				C1EC035190FAA261AE76F3CB /* DeepSeekModelTests.swift in Sources */,
+				8315CB52CA027AD30A9261E0 /* FormatTests.swift in Sources */,
+				9C7FF9A400F0C21666ACA9EF /* RawRSATests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		AD7B4CC8D756843FC3084FF4 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -291,6 +358,14 @@
 		};
 /* End PBXSourcesBuildPhase section */
 
+/* Begin PBXTargetDependency section */
+		84633C756530E5BCC095EEB5 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = A914A1B36477FC399C2D8343 /* OmniView */;
+			targetProxy = 54AD834B3012B2BD9A83541D /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
 /* Begin XCBuildConfiguration section */
 		5F5C37214283F66385B19364 /* Debug */ = {
 			isa = XCBuildConfiguration;
@@ -298,8 +373,6 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = OmniView/OmniView.entitlements;
 				COMBINE_HIDPI_IMAGES = YES;
-				ENABLE_APP_SANDBOX = NO;
-				ENABLE_USER_SELECTED_FILES = NO;
 				GENERATE_INFOPLIST_FILE = NO;
 				INFOPLIST_FILE = OmniView/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -346,9 +419,8 @@
 				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
-				CODE_SIGNING_ALLOWED = NO;
-				CODE_SIGNING_REQUIRED = NO;
 				CODE_SIGN_IDENTITY = "-";
+				CODE_SIGN_STYLE = Manual;
 				COPY_PHASE_STRIP = NO;
 				CURRENT_PROJECT_VERSION = 1;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
@@ -371,6 +443,7 @@
 				MTL_FAST_MATH = YES;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = macosx;
+				SUPPORTED_PLATFORMS = macosx;
 				SWIFT_COMPILATION_MODE = wholemodule;
 				SWIFT_OPTIMIZATION_LEVEL = "-O";
 				SWIFT_TREAT_WARNINGS_AS_ERRORS = NO;
@@ -411,9 +484,8 @@
 				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
-				CODE_SIGNING_ALLOWED = NO;
-				CODE_SIGNING_REQUIRED = NO;
 				CODE_SIGN_IDENTITY = "-";
+				CODE_SIGN_STYLE = Manual;
 				COPY_PHASE_STRIP = NO;
 				CURRENT_PROJECT_VERSION = 1;
 				DEBUG_INFORMATION_FORMAT = dwarf;
@@ -443,6 +515,7 @@
 				ONLY_ACTIVE_ARCH = YES;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = macosx;
+				SUPPORTED_PLATFORMS = macosx;
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_TREAT_WARNINGS_AS_ERRORS = NO;
@@ -456,8 +529,6 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = OmniView/OmniView.entitlements;
 				COMBINE_HIDPI_IMAGES = YES;
-				ENABLE_APP_SANDBOX = NO;
-				ENABLE_USER_SELECTED_FILES = NO;
 				GENERATE_INFOPLIST_FILE = NO;
 				INFOPLIST_FILE = OmniView/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -471,9 +542,52 @@
 			};
 			name = Release;
 		};
+		B2EC1C4105A1E8EFE6EFC24A /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				COMBINE_HIDPI_IMAGES = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+					"@loader_path/../Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.quinn.omniview.tests;
+				SDKROOT = macosx;
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/OmniView.app/Contents/MacOS/OmniView";
+			};
+			name = Release;
+		};
+		D07058FF020A74FAFF8156B5 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				COMBINE_HIDPI_IMAGES = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+					"@loader_path/../Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.quinn.omniview.tests;
+				SDKROOT = macosx;
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/OmniView.app/Contents/MacOS/OmniView";
+			};
+			name = Debug;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
+		18620E1A9DADDE20934A9A37 /* Build configuration list for PBXNativeTarget "OmniViewTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				D07058FF020A74FAFF8156B5 /* Debug */,
+				B2EC1C4105A1E8EFE6EFC24A /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
 		89213343D695139743655446 /* Build configuration list for PBXProject "OmniView" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (

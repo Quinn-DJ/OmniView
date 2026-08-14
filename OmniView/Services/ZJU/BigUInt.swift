@@ -190,7 +190,7 @@ struct BigUInt: Comparable, CustomStringConvertible {
         return BigUInt(limbs: result.reversed())
     }
 
-    /// 大端十六进制字符串
+    /// 大端十六进制字符串（规范化，无前导零）
     var hexString: String {
         guard !isZero else { return "0" }
         var bytes: [UInt8] = []
@@ -200,11 +200,16 @@ struct BigUInt: Comparable, CustomStringConvertible {
             bytes.append(UInt8((limb >> 8) & 0xFF))
             bytes.append(UInt8(limb & 0xFF))
         }
-        // 去掉前导零字节
-        while bytes.count > 1 && bytes[0] == 0 {
+        // 去除全部前导零字节
+        while !bytes.isEmpty && bytes[0] == 0 {
             bytes.removeFirst()
         }
-        return bytes.map { String(format: "%02x", $0) }.joined()
+        var hex = bytes.map { String(format: "%02x", $0) }.joined()
+        // 规范化：去除前导零数字（如 "01..." → "1..."）
+        while hex.count > 1 && hex.hasPrefix("0") {
+            hex.removeFirst()
+        }
+        return hex
     }
 
     var description: String { hexString }
@@ -215,6 +220,7 @@ struct BigUInt: Comparable, CustomStringConvertible {
 enum RawRSA {
     /// ZJU CAS 的裸 RSA：将明文字节作为大整数，计算 m^e mod n，输出十六进制
     static func encrypt(_ plaintext: String, modulusHex: String, exponentHex: String) -> String? {
+        guard !plaintext.isEmpty else { return nil }
         guard let modulus = BigUInt(hexString: modulusHex),
               let exponent = BigUInt(hexString: exponentHex),
               !modulus.isZero, !exponent.isZero
