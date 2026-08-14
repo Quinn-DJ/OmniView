@@ -1,0 +1,41 @@
+name: OmniView
+options:
+  bundleIdPrefix: com.quinn
+  deploymentTarget:
+    macOS: "14.0"
+  createIntermediateGroups: true
+  groupSortPosition: top
+settings:
+  base:
+    SWIFT_VERSION: "5.0"
+    MACOSX_DEPLOYMENT_TARGET: "14.0"
+    CODE_SIGN_IDENTITY: "-"
+    CODE_SIGNING_REQUIRED: "NO"
+    CODE_SIGNING_ALLOWED: "NO"
+    DEVELOPMENT_TEAM: ""
+    ENABLE_HARDENED_RUNTIME: "NO"
+    GCC_TREAT_WARNINGS_AS_ERRORS: "NO"
+    SWIFT_TREAT_WARNINGS_AS_ERRORS: "NO"
+    CURRENT_PROJECT_VERSION: "1"
+    MARKETING_VERSION: "0.1.0"
+targets:
+  OmniView:
+    type: application
+    platform: macOS
+    sources:
+      - path: OmniView
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.quinn.omniview
+        PRODUCT_NAME: OmniView
+        INFOPLIST_FILE: OmniView/Info.plist
+        GENERATE_INFOPLIST_FILE: "NO"
+        ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
+        ENABLE_APP_SANDBOX: "NO"
+        ENABLE_USER_SELECTED_FILES: "NO"
+        SWIFT_OBJC_BRIDGING_HEADER: ""
+    entitlements:
+      path: OmniView/OmniView.entitlements
+      properties:
+        com.apple.security.network.client: true
+        com.apple.security.personal-information.calendars: true

@@ -1,0 +1,48 @@
+# OmniView
+
+macOS 原生仪表盘应用（SwiftUI），集学习、系统监控与 AI 监控于一体的 Dashboard。
+
+## 功能
+
+### 1. 学习相关
+- **日历**：读取 Apple 日历中的 `Celechron课表` 与 `个人` 日历，支持 **日 / 周 / 月** 三种视图展示（参考 [Celechron](https://github.com/Celechron) 的展示方式），支持前后翻页与「今天」跳转
+- **作业待办**：登录学在浙大（CAS 统一身份认证）后查看各课程作业与截止时间，支持逾期 / 进行中分组与已提交筛选（参考 [fiz](https://github.com/CrazySpottedDove/fiz)）
+- **课件**：按课程浏览课件资料，支持一键下载到本地（Office 文件可走预览转换）
+
+### 2. 系统监控（参考 [mac-scope](https://github.com/shenmuoso/mac-scope)）
+- **系统负载**：CPU 使用率（环形仪表 + 30 分钟曲线）、内存占用、功耗（W）、温度（SoC / 电池 / 存储）、风扇转速（AppleSMC）
+- **活动**：网络上下行速率与总量、磁盘读写速率与容量、电池电量 / 循环 / 健康度
+- **系统信息**：机型、芯片、内存、显卡、macOS 版本、序列号、启动磁盘、存储等
+
+### 3. AI 监控（参考 [DeepSeekMonitor](https://github.com/JayHome137/DeepSeekMonitor)）
+- **DeepSeek 余额**：`GET /user/balance`，展示总余额 / 赠送 / 充值余额
+- **用量监控**：`GET /v1/usage`，最近 7 / 30 / 90 天 Token 消耗与费用曲线，按模型汇总
+- API Key 通过 macOS 钥匙串（Keychain）安全存储
+
+## 技术栈
+
+- SwiftUI + Swift Charts（macOS 14+）
+- EventKit（日历）、IOKit / sysctl / Mach API（系统指标）、AppleSMC（风扇）
+- 纯 Swift 实现的 BigUInt 裸 RSA（ZJU CAS 登录加密），无第三方依赖
+- 工程由 [XcodeGen](https://github.com/yonaskolb/XcodeGen) 生成（`project.yml`）
+
+## 构建
+
+```bash
+# 安装 XcodeGen（首次）
+brew install xcodegen
+
+# 生成工程并构建
+xcodegen generate
+xcodebuild -project OmniView.xcodeproj -scheme OmniView -configuration Debug \
+  -derivedDataPath build/DerivedData build
+
+# 运行
+open build/DerivedData/Build/Products/Debug/OmniView.app
+```
+
+## 说明
+
+- 应用未开启沙盒（与 Stats / iStat Menus 等系统监控工具一致），以便读取 SMC / IOKit 数据
+- 首次启动会请求「日历」访问权限；日历数据仅在本机读取，不上传
+- ZJU 登录凭据与 DeepSeek API Key 均保存在钥匙串中

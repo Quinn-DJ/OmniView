@@ -1,0 +1,498 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 77;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		1FDA5C5C0B4F371E9F26D491 /* SystemMonitorViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B3E740C3E1544DDC855AA51 /* SystemMonitorViewModel.swift */; };
+		217632C38DFE52D0F72913F2 /* DeepSeekDashboardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD20B958F1F9473CE4CDE1B0 /* DeepSeekDashboardView.swift */; };
+		23339E9AF81FF33DDD487C4B /* PowerMetricsReader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D0759ABDFFCDC0C2BB27B52 /* PowerMetricsReader.swift */; };
+		359C275253C30B25CECED9FB /* TemperatureReader.swift in Sources */ = {isa = PBXBuildFile; fileRef = D3858F6EB12559DF3E293138 /* TemperatureReader.swift */; };
+		50AF5F97F90D914DC2CF3C4F /* BigUInt.swift in Sources */ = {isa = PBXBuildFile; fileRef = D4C3F252161C9CEC430B6F6C /* BigUInt.swift */; };
+		50C4BF74C5BE9936D74EB1E7 /* ZJUViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = DAAA0F06ED9B4590E0F196B0 /* ZJUViewModel.swift */; };
+		5B4E63497F4A1EA82CDBEDE0 /* ZJUService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 72AA3176392D8ADD1B13EEF3 /* ZJUService.swift */; };
+		635D23A9A0513E6243492BB6 /* SMCReader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 103EA558C0EC851B42C2FCFD /* SMCReader.swift */; };
+		7099BCBFE4DCD2E1D99CF433 /* CalendarViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7103F80D295CEF9CC3F5FB77 /* CalendarViewModel.swift */; };
+		719B6D744BB09676B517D995 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60D266445B546166F7297B73 /* ContentView.swift */; };
+		7DCFBA911730EA5E6FB68AD9 /* KeychainStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 83DB1F552D6AA583E2E36575 /* KeychainStore.swift */; };
+		8182A28E498DFC49EE6897FE /* SystemDashboardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 787693AD80AC817694B7D574 /* SystemDashboardView.swift */; };
+		961E1554DA81A74F7313D81A /* SystemInfoView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7DD184419DC4A83510F7730C /* SystemInfoView.swift */; };
+		A5540130D55AB9F44D5041FB /* OmniViewApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 35110F0BB02F9520DEB3F8C6 /* OmniViewApp.swift */; };
+		A5D941A3A36F674655A6CC2A /* ChartCards.swift in Sources */ = {isa = PBXBuildFile; fileRef = 30E403D92047A0CF936FCD66 /* ChartCards.swift */; };
+		AD07BFE97B558B6478E14681 /* SystemSampler.swift in Sources */ = {isa = PBXBuildFile; fileRef = F88D49EBAD485B9C46A3A95E /* SystemSampler.swift */; };
+		B1F39246B07AC518F4F4A51E /* DeepSeekService.swift in Sources */ = {isa = PBXBuildFile; fileRef = AC9C4429617B354C8D4B7A47 /* DeepSeekService.swift */; };
+		B6F02EB00D08B3A306D99EA3 /* DeepSeekViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2A8DFBD83D63F5F3FBDF865C /* DeepSeekViewModel.swift */; };
+		BAF6DC7BC173860D1B738A38 /* HomeworkCoursewareViews.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D3EAF776973C6A2C68AC7AB /* HomeworkCoursewareViews.swift */; };
+		C1A3E29139E600609BA3D131 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 3AEE73713828C55A2E8891FF /* Assets.xcassets */; };
+		ECE42DD7C457D18E4B430651 /* SystemMetrics.swift in Sources */ = {isa = PBXBuildFile; fileRef = A096E7EFDCCA848B3FBD1F84 /* SystemMetrics.swift */; };
+		F0BC6770C5FDDEB86279985F /* CalendarViews.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC73367D8A4C19F82D1F30DC /* CalendarViews.swift */; };
+		F2FFCA0BBD689A43EDF6C78F /* HardwareInfoService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7BA053E377660A58B3C32E45 /* HardwareInfoService.swift */; };
+		F75DA73F8FBF15913E41B7DC /* CalendarService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8C53610740213437592F8B44 /* CalendarService.swift */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		0A5FCF0FF525E91B0ADB99D6 /* OmniView.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = OmniView.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		103EA558C0EC851B42C2FCFD /* SMCReader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SMCReader.swift; sourceTree = "<group>"; };
+		293B1FA1B25892241FBABC8D /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
+		2A8DFBD83D63F5F3FBDF865C /* DeepSeekViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeepSeekViewModel.swift; sourceTree = "<group>"; };
+		30E403D92047A0CF936FCD66 /* ChartCards.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChartCards.swift; sourceTree = "<group>"; };
+		35110F0BB02F9520DEB3F8C6 /* OmniViewApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OmniViewApp.swift; sourceTree = "<group>"; };
+		3AEE73713828C55A2E8891FF /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		5B3E740C3E1544DDC855AA51 /* SystemMonitorViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SystemMonitorViewModel.swift; sourceTree = "<group>"; };
+		60D266445B546166F7297B73 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
+		6D3EAF776973C6A2C68AC7AB /* HomeworkCoursewareViews.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeworkCoursewareViews.swift; sourceTree = "<group>"; };
+		7103F80D295CEF9CC3F5FB77 /* CalendarViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalendarViewModel.swift; sourceTree = "<group>"; };
+		72AA3176392D8ADD1B13EEF3 /* ZJUService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZJUService.swift; sourceTree = "<group>"; };
+		787693AD80AC817694B7D574 /* SystemDashboardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SystemDashboardView.swift; sourceTree = "<group>"; };
+		7BA053E377660A58B3C32E45 /* HardwareInfoService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HardwareInfoService.swift; sourceTree = "<group>"; };
+		7DD184419DC4A83510F7730C /* SystemInfoView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SystemInfoView.swift; sourceTree = "<group>"; };
+		83DB1F552D6AA583E2E36575 /* KeychainStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeychainStore.swift; sourceTree = "<group>"; };
+		8C53610740213437592F8B44 /* CalendarService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalendarService.swift; sourceTree = "<group>"; };
+		9D0759ABDFFCDC0C2BB27B52 /* PowerMetricsReader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PowerMetricsReader.swift; sourceTree = "<group>"; };
+		A096E7EFDCCA848B3FBD1F84 /* SystemMetrics.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SystemMetrics.swift; sourceTree = "<group>"; };
+		AC9C4429617B354C8D4B7A47 /* DeepSeekService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeepSeekService.swift; sourceTree = "<group>"; };
+		C99A0F5EEA9B54FADD914B6E /* OmniView.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = OmniView.entitlements; sourceTree = "<group>"; };
+		CD20B958F1F9473CE4CDE1B0 /* DeepSeekDashboardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeepSeekDashboardView.swift; sourceTree = "<group>"; };
+		D3858F6EB12559DF3E293138 /* TemperatureReader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TemperatureReader.swift; sourceTree = "<group>"; };
+		D4C3F252161C9CEC430B6F6C /* BigUInt.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BigUInt.swift; sourceTree = "<group>"; };
+		DAAA0F06ED9B4590E0F196B0 /* ZJUViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZJUViewModel.swift; sourceTree = "<group>"; };
+		EC73367D8A4C19F82D1F30DC /* CalendarViews.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalendarViews.swift; sourceTree = "<group>"; };
+		F88D49EBAD485B9C46A3A95E /* SystemSampler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SystemSampler.swift; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXGroup section */
+		0D408421B520666A1A8D9F8B /* AI */ = {
+			isa = PBXGroup;
+			children = (
+				CD20B958F1F9473CE4CDE1B0 /* DeepSeekDashboardView.swift */,
+			);
+			path = AI;
+			sourceTree = "<group>";
+		};
+		2BD3A516DC9E6BD11E3B1EE9 /* Monitor */ = {
+			isa = PBXGroup;
+			children = (
+				30E403D92047A0CF936FCD66 /* ChartCards.swift */,
+				787693AD80AC817694B7D574 /* SystemDashboardView.swift */,
+				7DD184419DC4A83510F7730C /* SystemInfoView.swift */,
+			);
+			path = Monitor;
+			sourceTree = "<group>";
+		};
+		36059EDBF4C9F769C7BF6F9B /* System */ = {
+			isa = PBXGroup;
+			children = (
+				7BA053E377660A58B3C32E45 /* HardwareInfoService.swift */,
+				9D0759ABDFFCDC0C2BB27B52 /* PowerMetricsReader.swift */,
+				103EA558C0EC851B42C2FCFD /* SMCReader.swift */,
+				F88D49EBAD485B9C46A3A95E /* SystemSampler.swift */,
+				D3858F6EB12559DF3E293138 /* TemperatureReader.swift */,
+			);
+			path = System;
+			sourceTree = "<group>";
+		};
+		453646727E09A068F9EF030A /* Learning */ = {
+			isa = PBXGroup;
+			children = (
+				EC73367D8A4C19F82D1F30DC /* CalendarViews.swift */,
+				6D3EAF776973C6A2C68AC7AB /* HomeworkCoursewareViews.swift */,
+			);
+			path = Learning;
+			sourceTree = "<group>";
+		};
+		45BBDA1F52F19A00DD8BF69D /* ViewModels */ = {
+			isa = PBXGroup;
+			children = (
+				7103F80D295CEF9CC3F5FB77 /* CalendarViewModel.swift */,
+				2A8DFBD83D63F5F3FBDF865C /* DeepSeekViewModel.swift */,
+				5B3E740C3E1544DDC855AA51 /* SystemMonitorViewModel.swift */,
+				DAAA0F06ED9B4590E0F196B0 /* ZJUViewModel.swift */,
+			);
+			path = ViewModels;
+			sourceTree = "<group>";
+		};
+		5D0A9BC92FA76344A424DDB4 /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				0D408421B520666A1A8D9F8B /* AI */,
+				453646727E09A068F9EF030A /* Learning */,
+				2BD3A516DC9E6BD11E3B1EE9 /* Monitor */,
+			);
+			path = Views;
+			sourceTree = "<group>";
+		};
+		721503C6506DD930D66A0605 /* ZJU */ = {
+			isa = PBXGroup;
+			children = (
+				D4C3F252161C9CEC430B6F6C /* BigUInt.swift */,
+				72AA3176392D8ADD1B13EEF3 /* ZJUService.swift */,
+			);
+			path = ZJU;
+			sourceTree = "<group>";
+		};
+		7F74319E2EC11A733828BC34 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				0A5FCF0FF525E91B0ADB99D6 /* OmniView.app */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		893AA575FE1E23DB55B8EECF /* Models */ = {
+			isa = PBXGroup;
+			children = (
+				A096E7EFDCCA848B3FBD1F84 /* SystemMetrics.swift */,
+			);
+			path = Models;
+			sourceTree = "<group>";
+		};
+		A475FD25A30B07DCAA431BEF /* OmniView */ = {
+			isa = PBXGroup;
+			children = (
+				C3EEB4F653192C9DF446D353 /* App */,
+				893AA575FE1E23DB55B8EECF /* Models */,
+				E478D367632F983A257D56DA /* Services */,
+				45BBDA1F52F19A00DD8BF69D /* ViewModels */,
+				5D0A9BC92FA76344A424DDB4 /* Views */,
+				3AEE73713828C55A2E8891FF /* Assets.xcassets */,
+				293B1FA1B25892241FBABC8D /* Info.plist */,
+				C99A0F5EEA9B54FADD914B6E /* OmniView.entitlements */,
+			);
+			path = OmniView;
+			sourceTree = "<group>";
+		};
+		C3EEB4F653192C9DF446D353 /* App */ = {
+			isa = PBXGroup;
+			children = (
+				60D266445B546166F7297B73 /* ContentView.swift */,
+				35110F0BB02F9520DEB3F8C6 /* OmniViewApp.swift */,
+			);
+			path = App;
+			sourceTree = "<group>";
+		};
+		E478D367632F983A257D56DA /* Services */ = {
+			isa = PBXGroup;
+			children = (
+				36059EDBF4C9F769C7BF6F9B /* System */,
+				721503C6506DD930D66A0605 /* ZJU */,
+				8C53610740213437592F8B44 /* CalendarService.swift */,
+				AC9C4429617B354C8D4B7A47 /* DeepSeekService.swift */,
+				83DB1F552D6AA583E2E36575 /* KeychainStore.swift */,
+			);
+			path = Services;
+			sourceTree = "<group>";
+		};
+		E7BF3303473480E4786F25F2 = {
+			isa = PBXGroup;
+			children = (
+				A475FD25A30B07DCAA431BEF /* OmniView */,
+				7F74319E2EC11A733828BC34 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		A914A1B36477FC399C2D8343 /* OmniView */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = AC70E18232950E52C7B99B94 /* Build configuration list for PBXNativeTarget "OmniView" */;
+			buildPhases = (
+				AD7B4CC8D756843FC3084FF4 /* Sources */,
+				70846316D49594EAD73DB632 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = OmniView;
+			packageProductDependencies = (
+			);
+			productName = OmniView;
+			productReference = 0A5FCF0FF525E91B0ADB99D6 /* OmniView.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		A51A8F2BAAE571EF1DB1C8EB /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = YES;
+				LastUpgradeCheck = 1430;
+				TargetAttributes = {
+					A914A1B36477FC399C2D8343 = {
+						DevelopmentTeam = "";
+					};
+				};
+			};
+			buildConfigurationList = 89213343D695139743655446 /* Build configuration list for PBXProject "OmniView" */;
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				Base,
+				en,
+			);
+			mainGroup = E7BF3303473480E4786F25F2;
+			minimizedProjectReferenceProxies = 1;
+			preferredProjectObjectVersion = 77;
+			productRefGroup = 7F74319E2EC11A733828BC34 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				A914A1B36477FC399C2D8343 /* OmniView */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		70846316D49594EAD73DB632 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				C1A3E29139E600609BA3D131 /* Assets.xcassets in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		AD7B4CC8D756843FC3084FF4 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				50AF5F97F90D914DC2CF3C4F /* BigUInt.swift in Sources */,
+				F75DA73F8FBF15913E41B7DC /* CalendarService.swift in Sources */,
+				7099BCBFE4DCD2E1D99CF433 /* CalendarViewModel.swift in Sources */,
+				F0BC6770C5FDDEB86279985F /* CalendarViews.swift in Sources */,
+				A5D941A3A36F674655A6CC2A /* ChartCards.swift in Sources */,
+				719B6D744BB09676B517D995 /* ContentView.swift in Sources */,
+				217632C38DFE52D0F72913F2 /* DeepSeekDashboardView.swift in Sources */,
+				B1F39246B07AC518F4F4A51E /* DeepSeekService.swift in Sources */,
+				B6F02EB00D08B3A306D99EA3 /* DeepSeekViewModel.swift in Sources */,
+				F2FFCA0BBD689A43EDF6C78F /* HardwareInfoService.swift in Sources */,
+				BAF6DC7BC173860D1B738A38 /* HomeworkCoursewareViews.swift in Sources */,
+				7DCFBA911730EA5E6FB68AD9 /* KeychainStore.swift in Sources */,
+				A5540130D55AB9F44D5041FB /* OmniViewApp.swift in Sources */,
+				23339E9AF81FF33DDD487C4B /* PowerMetricsReader.swift in Sources */,
+				635D23A9A0513E6243492BB6 /* SMCReader.swift in Sources */,
+				8182A28E498DFC49EE6897FE /* SystemDashboardView.swift in Sources */,
+				961E1554DA81A74F7313D81A /* SystemInfoView.swift in Sources */,
+				ECE42DD7C457D18E4B430651 /* SystemMetrics.swift in Sources */,
+				1FDA5C5C0B4F371E9F26D491 /* SystemMonitorViewModel.swift in Sources */,
+				AD07BFE97B558B6478E14681 /* SystemSampler.swift in Sources */,
+				359C275253C30B25CECED9FB /* TemperatureReader.swift in Sources */,
+				5B4E63497F4A1EA82CDBEDE0 /* ZJUService.swift in Sources */,
+				50C4BF74C5BE9936D74EB1E7 /* ZJUViewModel.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin XCBuildConfiguration section */
+		5F5C37214283F66385B19364 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = OmniView/OmniView.entitlements;
+				COMBINE_HIDPI_IMAGES = YES;
+				ENABLE_APP_SANDBOX = NO;
+				ENABLE_USER_SELECTED_FILES = NO;
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = OmniView/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.quinn.omniview;
+				PRODUCT_NAME = OmniView;
+				SDKROOT = macosx;
+				SWIFT_OBJC_BRIDGING_HEADER = "";
+			};
+			name = Debug;
+		};
+		89E890726D338D7FF3631C42 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGNING_ALLOWED = NO;
+				CODE_SIGNING_REQUIRED = NO;
+				CODE_SIGN_IDENTITY = "-";
+				COPY_PHASE_STRIP = NO;
+				CURRENT_PROJECT_VERSION = 1;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DEVELOPMENT_TEAM = "";
+				ENABLE_HARDENED_RUNTIME = NO;
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_TREAT_WARNINGS_AS_ERRORS = NO;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 14.0;
+				MARKETING_VERSION = 0.1.0;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
+				SWIFT_TREAT_WARNINGS_AS_ERRORS = NO;
+				SWIFT_VERSION = 5.0;
+			};
+			name = Release;
+		};
+		8A97E5A68B205B33778D69BA /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGNING_ALLOWED = NO;
+				CODE_SIGNING_REQUIRED = NO;
+				CODE_SIGN_IDENTITY = "-";
+				COPY_PHASE_STRIP = NO;
+				CURRENT_PROJECT_VERSION = 1;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				DEVELOPMENT_TEAM = "";
+				ENABLE_HARDENED_RUNTIME = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"$(inherited)",
+					"DEBUG=1",
+				);
+				GCC_TREAT_WARNINGS_AS_ERRORS = NO;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 14.0;
+				MARKETING_VERSION = 0.1.0;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_TREAT_WARNINGS_AS_ERRORS = NO;
+				SWIFT_VERSION = 5.0;
+			};
+			name = Debug;
+		};
+		9EF088FB3ECFD0030613F487 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = OmniView/OmniView.entitlements;
+				COMBINE_HIDPI_IMAGES = YES;
+				ENABLE_APP_SANDBOX = NO;
+				ENABLE_USER_SELECTED_FILES = NO;
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = OmniView/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.quinn.omniview;
+				PRODUCT_NAME = OmniView;
+				SDKROOT = macosx;
+				SWIFT_OBJC_BRIDGING_HEADER = "";
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		89213343D695139743655446 /* Build configuration list for PBXProject "OmniView" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				8A97E5A68B205B33778D69BA /* Debug */,
+				89E890726D338D7FF3631C42 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		AC70E18232950E52C7B99B94 /* Build configuration list for PBXNativeTarget "OmniView" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				5F5C37214283F66385B19364 /* Debug */,
+				9EF088FB3ECFD0030613F487 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = A51A8F2BAAE571EF1DB1C8EB /* Project object */;
+}
