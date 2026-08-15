@@ -4,7 +4,7 @@ import SwiftUI
 /// DeepSeek 监控看板
 struct DeepSeekDashboardView: View {
     @EnvironmentObject private var viewModel: DeepSeekViewModel
-    @State private var showSettings = false
+    @Environment(\.openSettings) private var openSettings
 
     var body: some View {
         Group {
@@ -62,10 +62,6 @@ struct DeepSeekDashboardView: View {
             }
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
-    }
-
-    private func openSettings() {
-        NSApp.sendAction(Selector(("showSettingsWindow:")), to: nil, from: nil)
     }
 
     // MARK: - 看板

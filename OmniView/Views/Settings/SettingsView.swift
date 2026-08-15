@@ -45,8 +45,18 @@ struct ZJUSettingsTab: View {
 
             if !viewModel.isLoggedIn {
                 Section("登录学在浙大") {
+                    // 学号与密码文本框对称对齐：学号左侧留出与眼睛按钮等宽的占位
                     TextField("学号", text: $viewModel.username)
-                    HStack {
+                        .padding(.leading, 30)
+                    HStack(spacing: 6) {
+                        Button {
+                            isSecured.toggle()
+                        } label: {
+                            Image(systemName: isSecured ? "eye" : "eye.slash")
+                                .frame(width: 16)
+                        }
+                        .buttonStyle(.borderless)
+                        .help(isSecured ? "显示密码" : "隐藏密码")
                         Group {
                             if isSecured {
                                 SecureField("统一身份认证密码", text: $viewModel.password)
@@ -54,33 +64,29 @@ struct ZJUSettingsTab: View {
                                 TextField("统一身份认证密码", text: $viewModel.password)
                             }
                         }
-                        .textFieldStyle(.roundedBorder)
-                        Button {
-                            isSecured.toggle()
-                        } label: {
-                            Image(systemName: isSecured ? "eye" : "eye.slash")
-                        }
-                        .buttonStyle(.borderless)
                     }
                     if let error = viewModel.loginError {
                         Text(error)
                             .font(.caption)
                             .foregroundStyle(.red)
                     }
-                    Button {
-                        Task { await viewModel.login() }
-                    } label: {
-                        if viewModel.isLoggingIn {
-                            ProgressView()
-                                .controlSize(.small)
-                        } else {
-                            Text("登录")
+                    HStack {
+                        Spacer()
+                        Button {
+                            Task { await viewModel.login() }
+                        } label: {
+                            if viewModel.isLoggingIn {
+                                ProgressView()
+                                    .controlSize(.small)
+                            } else {
+                                Text("登录")
+                            }
                         }
+                        .buttonStyle(.borderedProminent)
+                        .disabled(viewModel.isLoggingIn
+                            || viewModel.username.isEmpty
+                            || viewModel.password.isEmpty)
                     }
-                    .buttonStyle(.borderedProminent)
-                    .disabled(viewModel.isLoggingIn
-                        || viewModel.username.isEmpty
-                        || viewModel.password.isEmpty)
                 }
             }
         }
@@ -117,7 +123,17 @@ struct DeepSeekSettingsTab: View {
             }
 
             Section(viewModel.hasAPIKey ? "更新 API Key" : "配置 API Key") {
-                SecureField("sk-…", text: $viewModel.apiKeyInput)
+                // 密码类型文本框 + 未输入时的浅色小字占位提示
+                ZStack(alignment: .leading) {
+                    if viewModel.apiKeyInput.isEmpty {
+                        Text("sk-...")
+                            .font(.caption)
+                            .foregroundStyle(.tertiary)
+                            .padding(.leading, 8)
+                            .allowsHitTesting(false)
+                    }
+                    SecureField("", text: $viewModel.apiKeyInput)
+                }
                 Text("API Key 仅保存在本机钥匙串中，用于查询 DeepSeek 官方余额与用量接口。")
                     .font(.caption)
                     .foregroundStyle(.secondary)

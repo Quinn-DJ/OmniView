@@ -322,6 +322,7 @@ struct UploadRow: View {
 // MARK: - 未登录提示（引导前往「设置」）
 
 struct ZJULoginView: View {
+    @Environment(\.openSettings) private var openSettings
     let title: String
     let subtitle: String
 
@@ -346,9 +347,5 @@ struct ZJULoginView: View {
         }
         .padding(40)
         .frame(maxWidth: .infinity, maxHeight: .infinity)
-    }
-
-    private func openSettings() {
-        NSApp.sendAction(Selector(("showSettingsWindow:")), to: nil, from: nil)
     }
 }
