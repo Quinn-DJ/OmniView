@@ -44,11 +44,13 @@ open build/DerivedData/Build/Products/Debug/OmniView.app
 ## 打包 DMG
 
 ```bash
-./scripts/build_dmg.sh                                  # 输出 build/OmniView-0.1.0.dmg
+./scripts/build_dmg.sh                                  # 输出 build/OmniView-0.1.0-arm64.dmg
 ./scripts/build_dmg.sh ~/Desktop/OmniView.dmg           # 自定义输出路径
+ARCH=x86_64 ./scripts/build_dmg.sh                      # 其他架构（默认 arm64）
 ```
 
 脚本会构建 Release 版本，将 `OmniView.app` 与 `Applications` 快捷方式打包为只读 UDZO 压缩 DMG。
+**默认仅打包 arm64**（Apple Silicon 原生），可通过 `ARCH` 环境变量指定其他架构。
 应用为临时签名（ad-hoc），仅供本机/个人使用；如需分发给他人，请配置开发者签名后重新打包。
 
 ## 说明
