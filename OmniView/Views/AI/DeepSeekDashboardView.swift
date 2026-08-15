@@ -5,6 +5,7 @@ import SwiftUI
 struct DeepSeekDashboardView: View {
     @EnvironmentObject private var viewModel: DeepSeekViewModel
     @Environment(\.openSettings) private var openSettings
+    @State private var selectedTokenDate: Date?
 
     var body: some View {
         Group {
@@ -195,6 +196,7 @@ struct DeepSeekDashboardView: View {
                 .frame(maxWidth: .infinity, minHeight: 120)
             } else {
                 usageChart
+                tokenUsageChart
                 usageStatsRow
             }
         }
@@ -216,6 +218,107 @@ struct DeepSeekDashboardView: View {
         }
         .chartYAxisLabel("费用 (\(balanceCurrency))")
         .frame(height: 180)
+    }
+
+    // MARK: - 按日 Token 堆叠柱 + hover 明细
+
+    private var tokenUsageChart: some View {
+        VStack(alignment: .leading, spacing: 8) {
+            HStack {
+                Text("按日 Token 消耗")
+                    .font(.subheadline.weight(.medium))
+                Spacer()
+                Text("合计 \(compactTokens(viewModel.totalTokens))")
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+                    .monospacedDigit()
+            }
+
+            Chart(viewModel.dailyTokenUsage, id: \.date) { day in
+                BarMark(
+                    x: .value("日期", day.date, unit: .day),
+                    y: .value("Tokens", day.cacheHit),
+                    stacking: .standard
+                )
+                .foregroundStyle(by: .value("类型", "输入 · 缓存命中"))
+
+                BarMark(
+                    x: .value("日期", day.date, unit: .day),
+                    y: .value("Tokens", day.cacheMiss),
+                    stacking: .standard
+                )
+                .foregroundStyle(by: .value("类型", "输入 · 未命中"))
+
+                BarMark(
+                    x: .value("日期", day.date, unit: .day),
+                    y: .value("Tokens", day.output),
+                    stacking: .standard
+                )
+                .foregroundStyle(by: .value("类型", "输出"))
+            }
+            .chartForegroundStyleScale([
+                "输入 · 缓存命中": Color.teal,
+                "输入 · 未命中": Color.orange,
+                "输出": Color.indigo,
+            ])
+            .chartYAxisLabel("Tokens")
+            .chartLegend(position: .bottom, alignment: .leading, spacing: 8)
+            .chartOverlay { proxy in
+                GeometryReader { geometry in
+                    Rectangle()
+                        .fill(.clear)
+                        .contentShape(Rectangle())
+                        .onContinuousHover { phase in
+                            switch phase {
+                            case .active(let location):
+                                selectedTokenDate = proxy.value(atX: location.x) as Date?
+                            case .ended:
+                                selectedTokenDate = nil
+                            }
+                        }
+                        .overlay(alignment: .top) {
+                            if let day = hoveredTokenDay {
+                                TokenUsageTooltip(day: day)
+                                    .frame(width: 190)
+                                    .offset(
+                                        x: tooltipOffsetX(proxy: proxy, chartWidth: geometry.size.width),
+                                        y: 4
+                                    )
+                            }
+                        }
+                }
+            }
+            .frame(height: 180)
+        }
+    }
+
+    private var hoveredTokenDay: DailyTokenUsage? {
+        guard let selectedTokenDate else { return nil }
+        return viewModel.dailyTokenUsage.first {
+            Calendar.current.isDate($0.date, inSameDayAs: selectedTokenDate)
+        }
+    }
+
+    private func tooltipOffsetX(proxy: ChartProxy, chartWidth: CGFloat) -> CGFloat {
+        guard let day = hoveredTokenDay,
+              let x = proxy.position(forX: day.date)
+        else {
+            return 0
+        }
+        let tooltipWidth: CGFloat = 190
+        let minOffset: CGFloat = 6
+        let maxOffset = max(minOffset, chartWidth - tooltipWidth - 6)
+        return min(max(x - tooltipWidth / 2, minOffset), maxOffset)
+    }
+
+    private func compactTokens(_ value: Int) -> String {
+        if value >= 1_000_000 {
+            return String(format: "%.2fM", Double(value) / 1_000_000)
+        }
+        if value >= 1_000 {
+            return String(format: "%.1fK", Double(value) / 1_000)
+        }
+        return "\(value)"
     }
 
     private var usageStatsRow: some View {
@@ -280,6 +383,54 @@ struct DeepSeekDashboardView: View {
             RoundedRectangle(cornerRadius: 12)
                 .fill(Color.primary.opacity(0.04))
         )
+    }
+}
+
+// MARK: - 按日 Token 明细浮层
+
+private struct TokenUsageTooltip: View {
+    let day: DailyTokenUsage
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 6) {
+            HStack(alignment: .firstTextBaseline) {
+                Text(day.date.formatted(.dateTime.month().day()))
+                    .font(.caption.weight(.semibold))
+                Spacer()
+                Text("\(day.total) tokens")
+                    .font(.caption.weight(.semibold))
+                    .monospacedDigit()
+            }
+
+            Divider()
+
+            tooltipRow(title: "输入 · 缓存命中", value: day.cacheHit, color: .teal)
+            tooltipRow(title: "输入 · 未命中", value: day.cacheMiss, color: .orange)
+            tooltipRow(title: "输出", value: day.output, color: .indigo)
+            tooltipRow(title: "请求次数", value: day.requests, color: .secondary)
+        }
+        .padding(10)
+        .background(.regularMaterial, in: RoundedRectangle(cornerRadius: 10))
+        .overlay(
+            RoundedRectangle(cornerRadius: 10)
+                .stroke(Color.primary.opacity(0.1), lineWidth: 1)
+        )
+        .shadow(color: .black.opacity(0.12), radius: 8, y: 3)
+    }
+
+    private func tooltipRow(title: String, value: Int, color: Color) -> some View {
+        HStack(spacing: 6) {
+            Circle()
+                .fill(color)
+                .frame(width: 7, height: 7)
+            Text(title)
+                .font(.caption)
+                .foregroundStyle(.secondary)
+            Spacer()
+            Text("\(value)")
+                .font(.caption.weight(.medium))
+                .monospacedDigit()
+        }
     }
 }
 

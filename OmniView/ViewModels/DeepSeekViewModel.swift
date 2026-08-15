@@ -1,6 +1,18 @@
 import Combine
 import Foundation
 
+/// 单日 Token 用量拆分（用于堆叠柱状图与 hover 明细）
+struct DailyTokenUsage: Identifiable {
+    let id = UUID()
+    let date: Date
+    var cacheHit: Int
+    var cacheMiss: Int
+    var output: Int
+    var requests: Int
+
+    var total: Int { cacheHit + cacheMiss + output }
+}
+
 /// DeepSeek 监控视图模型：余额与用量
 final class DeepSeekViewModel: ObservableObject {
     @Published var hasAPIKey = false
@@ -51,6 +63,29 @@ final class DeepSeekViewModel: ObservableObject {
         }
         return byDay.map { ($0.key, $0.value.cost, $0.value.tokens) }
             .sorted { $0.date < $1.date }
+    }
+
+    /// 按日 Token 消耗拆分（输入缓存命中 / 输入未命中 / 输出 / 请求次数）
+    var dailyTokenUsage: [DailyTokenUsage] {
+        let calendar = Calendar.current
+        var byDay: [Date: DailyTokenUsage] = [:]
+        for record in usageRecords {
+            guard let date = Self.dateFormatter.date(from: record.date) else { continue }
+            let day = calendar.startOfDay(for: date)
+            var entry = byDay[day] ?? DailyTokenUsage(
+                date: day,
+                cacheHit: 0,
+                cacheMiss: 0,
+                output: 0,
+                requests: 0
+            )
+            entry.cacheHit += record.inputCacheHitTokens
+            entry.cacheMiss += record.inputCacheMissTokens
+            entry.output += record.completionTokens
+            entry.requests += record.requestCount
+            byDay[day] = entry
+        }
+        return byDay.values.sorted { $0.date < $1.date }
     }
 
     var modelSummary: [(model: String, tokens: Int, cost: Decimal)] {

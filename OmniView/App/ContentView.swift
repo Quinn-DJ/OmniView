@@ -45,6 +45,7 @@ struct ContentView: View {
     }
 
     @State private var selection: Section?
+    @State private var columnVisibility: NavigationSplitViewVisibility = .all
 
     init(initialSection: Section? = nil) {
         _selection = State(initialValue: initialSection ?? Self.defaultSection)
@@ -63,7 +64,7 @@ struct ContentView: View {
     }
 
     var body: some View {
-        NavigationSplitView {
+        NavigationSplitView(columnVisibility: $columnVisibility) {
             List(Section.allCases, selection: $selection) { section in
                 Label(section.rawValue, systemImage: section.icon)
                     .tag(section)
@@ -71,6 +72,7 @@ struct ContentView: View {
             .navigationSplitViewColumnWidth(min: 180, ideal: 200)
             .listStyle(.sidebar)
             .navigationTitle("OmniView")
+            .toolbar(removing: .sidebarToggle)
         } detail: {
             switch selection ?? .dashboard {
             case .calendar:
@@ -87,6 +89,30 @@ struct ContentView: View {
                 DeepSeekDashboardView()
             }
         }
+        .toolbar {
+            ToolbarItem(placement: .primaryAction) {
+                sidebarToggleButton
+            }
+        }
+    }
+
+    // MARK: - 固定靠右的边栏开关
+
+    private var sidebarVisible: Bool {
+        columnVisibility != .detailOnly
+    }
+
+    private var sidebarToggleButton: some View {
+        Button {
+            withAnimation(.easeInOut(duration: 0.2)) {
+                columnVisibility = sidebarVisible ? .detailOnly : .all
+            }
+        } label: {
+            Image(systemName: sidebarVisible ? "sidebar.left" : "sidebar.right")
+        }
+        .help(sidebarVisible ? "隐藏边栏" : "显示边栏")
+        .accessibilityLabel(sidebarVisible ? "隐藏边栏" : "显示边栏")
+        .keyboardShortcut("s", modifiers: [.control, .command])
     }
 }
 

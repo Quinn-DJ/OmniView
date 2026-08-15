@@ -351,10 +351,6 @@
 						ProvisioningStyle = Manual;
 						TestTargetID = A914A1B36477FC399C2D8343;
 					};
-					A914A1B36477FC399C2D8343 = {
-						DevelopmentTeam = "";
-						ProvisioningStyle = Manual;
-					};
 				};
 			};
 			buildConfigurationList = 89213343D695139743655446 /* Build configuration list for PBXProject "OmniView" */;
@@ -482,7 +478,10 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = OmniView/OmniView.entitlements;
+				CODE_SIGN_IDENTITY = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
+				DEVELOPMENT_TEAM = 6QCT579V2R;
 				GENERATE_INFOPLIST_FILE = NO;
 				INFOPLIST_FILE = OmniView/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -491,6 +490,7 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.quinn.omniview;
 				PRODUCT_NAME = OmniView;
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				SDKROOT = macosx;
 				SWIFT_OBJC_BRIDGING_HEADER = "";
 			};
@@ -638,7 +638,10 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = OmniView/OmniView.entitlements;
+				CODE_SIGN_IDENTITY = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
+				DEVELOPMENT_TEAM = 6QCT579V2R;
 				GENERATE_INFOPLIST_FILE = NO;
 				INFOPLIST_FILE = OmniView/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -647,6 +650,7 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.quinn.omniview;
 				PRODUCT_NAME = OmniView;
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				SDKROOT = macosx;
 				SWIFT_OBJC_BRIDGING_HEADER = "";
 			};
