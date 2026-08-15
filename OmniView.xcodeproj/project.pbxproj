@@ -15,6 +15,7 @@
 		50C4BF74C5BE9936D74EB1E7 /* ZJUViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = DAAA0F06ED9B4590E0F196B0 /* ZJUViewModel.swift */; };
 		5B4E63497F4A1EA82CDBEDE0 /* ZJUService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 72AA3176392D8ADD1B13EEF3 /* ZJUService.swift */; };
 		635D23A9A0513E6243492BB6 /* SMCReader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 103EA558C0EC851B42C2FCFD /* SMCReader.swift */; };
+		70487B70C33BB337E818F119 /* BatteryInfoService.swift in Sources */ = {isa = PBXBuildFile; fileRef = C61A542A758AD00B2EEF2C3C /* BatteryInfoService.swift */; };
 		7099BCBFE4DCD2E1D99CF433 /* CalendarViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7103F80D295CEF9CC3F5FB77 /* CalendarViewModel.swift */; };
 		719B6D744BB09676B517D995 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60D266445B546166F7297B73 /* ContentView.swift */; };
 		7DCFBA911730EA5E6FB68AD9 /* KeychainStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 83DB1F552D6AA583E2E36575 /* KeychainStore.swift */; };
@@ -72,6 +73,7 @@
 		A096E7EFDCCA848B3FBD1F84 /* SystemMetrics.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SystemMetrics.swift; sourceTree = "<group>"; };
 		AC9C4429617B354C8D4B7A47 /* DeepSeekService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeepSeekService.swift; sourceTree = "<group>"; };
 		B720DD8057F7E5E87267AB8A /* DeepSeekModelTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeepSeekModelTests.swift; sourceTree = "<group>"; };
+		C61A542A758AD00B2EEF2C3C /* BatteryInfoService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BatteryInfoService.swift; sourceTree = "<group>"; };
 		C99A0F5EEA9B54FADD914B6E /* OmniView.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = OmniView.entitlements; sourceTree = "<group>"; };
 		CD20B958F1F9473CE4CDE1B0 /* DeepSeekDashboardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeepSeekDashboardView.swift; sourceTree = "<group>"; };
 		D3858F6EB12559DF3E293138 /* TemperatureReader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TemperatureReader.swift; sourceTree = "<group>"; };
@@ -104,6 +106,7 @@
 		36059EDBF4C9F769C7BF6F9B /* System */ = {
 			isa = PBXGroup;
 			children = (
+				C61A542A758AD00B2EEF2C3C /* BatteryInfoService.swift */,
 				7BA053E377660A58B3C32E45 /* HardwareInfoService.swift */,
 				9D0759ABDFFCDC0C2BB27B52 /* PowerMetricsReader.swift */,
 				103EA558C0EC851B42C2FCFD /* SMCReader.swift */,
@@ -330,6 +333,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				70487B70C33BB337E818F119 /* BatteryInfoService.swift in Sources */,
 				50AF5F97F90D914DC2CF3C4F /* BigUInt.swift in Sources */,
 				F75DA73F8FBF15913E41B7DC /* CalendarService.swift in Sources */,
 				7099BCBFE4DCD2E1D99CF433 /* CalendarViewModel.swift in Sources */,

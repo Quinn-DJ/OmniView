@@ -2,13 +2,15 @@ import Charts
 import SwiftUI
 
 /// 系统监控仪表盘
-/// 布局：顶部 6 项简要指标（CPU / 内存 / 功耗 / 温度 / 网络 / 磁盘）
-///       + 下方 3 列图表/详情面板
+/// 布局：
+///   - 顶部简要指标：CPU / 内存 / 温度 / 网络 / 磁盘（磁盘含容量与读写速率明细）
+///   - 下方 3×2 图表面板：CPU 活动、内存占用、网络活动 / 温度活动、功耗活动、散热
+///   - 电池信息已移至「系统信息」页
 struct SystemDashboardView: View {
     @EnvironmentObject private var viewModel: SystemMonitorViewModel
 
     private let statusColumns = [
-        GridItem(.adaptive(minimum: 165, maximum: 240), spacing: 12),
+        GridItem(.adaptive(minimum: 175, maximum: 250), spacing: 12),
     ]
     private let panelColumns = [
         GridItem(.flexible(), spacing: 12),
@@ -21,15 +23,14 @@ struct SystemDashboardView: View {
             VStack(spacing: 16) {
                 if let snapshot = viewModel.snapshot {
                     statusMetrics(snapshot)
+                    // 3×2 图表面板：第一行 CPU/内存/网络，第二行 温度/功耗/散热
                     LazyVGrid(columns: panelColumns, spacing: 12) {
                         cpuPanel(snapshot)
                         memoryPanel(snapshot)
-                        powerPanel(snapshot)
-                        thermalPanel(snapshot)
-                        coolingPanel(snapshot)
                         networkPanel(snapshot)
-                        diskPanel(snapshot)
-                        batteryPanel(snapshot)
+                        thermalPanel(snapshot)
+                        powerPanel(snapshot)
+                        coolingPanel(snapshot)
                     }
                 } else {
                     ProgressView("正在采集系统指标…")
@@ -54,7 +55,7 @@ struct SystemDashboardView: View {
         }
     }
 
-    // MARK: - 简要指标行（6 项）
+    // MARK: - 简要指标行（CPU / 内存 / 温度 / 网络 / 磁盘）
 
     private func statusMetrics(_ snapshot: SystemSnapshot) -> some View {
         LazyVGrid(columns: statusColumns, spacing: 12) {
@@ -75,18 +76,10 @@ struct SystemDashboardView: View {
             )
 
             StatusMetricCard(
-                title: "系统功耗",
-                systemImage: "bolt.fill",
-                value: Format.watts(snapshot.power.systemWatts),
-                detail: powerDetail(snapshot.power),
-                indicatorColor: .orange
-            )
-
-            StatusMetricCard(
                 title: "SoC 温度",
                 systemImage: "thermometer.medium",
                 value: Format.celsius(snapshot.temperature.socCelsius),
-                detail: thermalStatusTitle(snapshot.temperature.status),
+                detail: "\(thermalStatusTitle(snapshot.temperature.status)) · 电池 \(Format.celsius(snapshot.temperature.batteryCelsius))",
                 indicatorColor: temperatureColor(snapshot.temperature.socCelsius)
             )
 
@@ -98,11 +91,16 @@ struct SystemDashboardView: View {
                 indicatorColor: .blue
             )
 
+            // 磁盘：详情并入简要卡片（容量 + 读写速率）
             StatusMetricCard(
                 title: "磁盘",
                 systemImage: "internaldrive",
                 value: Format.percent(snapshot.disk.usedFraction * 100),
-                detail: "可用 \(Format.bytes(snapshot.disk.available)) · 共 \(Format.bytes(snapshot.disk.total))",
+                detail: "",
+                detailLines: [
+                    "已用 \(Format.bytes(snapshot.disk.used)) · 可用 \(Format.bytes(snapshot.disk.available))",
+                    "共 \(Format.bytes(snapshot.disk.total)) · 读 \(Format.rate(snapshot.disk.readRate)) · 写 \(Format.rate(snapshot.disk.writeRate))",
+                ],
                 indicatorColor: diskColor(snapshot.disk.usedFraction)
             )
         }
@@ -129,15 +127,6 @@ struct SystemDashboardView: View {
         case ..<0.7: return .blue
         case ..<0.9: return .orange
         default: return .red
-        }
-    }
-
-    private func powerDetail(_ power: PowerUsage) -> String {
-        guard power.systemWatts != nil else { return "功耗遥测不可用" }
-        switch power.isExternalPowerConnected {
-        case true: return "已连接电源"
-        case false: return "正在使用电池"
-        case nil: return "实时系统负载"
         }
     }
 
@@ -210,6 +199,90 @@ struct SystemDashboardView: View {
         }
     }
 
+    // MARK: - 网络面板
+
+    private func networkPanel(_ snapshot: SystemSnapshot) -> some View {
+        InfoPanel(title: "网络活动", subtitle: "最近 60 秒") {
+            VStack(alignment: .leading, spacing: 8) {
+                ChartLegendRow(
+                    title: "下载",
+                    value: Format.rate(snapshot.network.downloadRate),
+                    color: .blue
+                )
+                ChartLegendRow(
+                    title: "上传",
+                    value: Format.rate(snapshot.network.uploadRate),
+                    color: .green
+                )
+            }
+
+            let networkPoints = recent(viewModel.networkHistory, keyPath: \.timestamp).flatMap { entry in
+                [
+                    LineChartPoint(
+                        timestamp: entry.timestamp,
+                        value: entry.downloadRate / 1_048_576,
+                        series: "下载",
+                        color: .blue
+                    ),
+                    LineChartPoint(
+                        timestamp: entry.timestamp,
+                        value: entry.uploadRate / 1_048_576,
+                        series: "上传",
+                        color: .green
+                    ),
+                ]
+            }
+            PerformanceLineChart(
+                points: networkPoints,
+                yDomain: PerformanceLineChart.safeDomain(
+                    values: networkPoints.map(\.value), floor: 0.1
+                ),
+                height: 150
+            )
+            Text("速率单位：MB/s · 累计 ↓\(Format.bytes(snapshot.network.downloadTotal)) · ↑\(Format.bytes(snapshot.network.uploadTotal))")
+                .font(.caption2)
+                .foregroundStyle(.tertiary)
+                .lineLimit(1)
+                .minimumScaleFactor(0.8)
+        }
+    }
+
+    // MARK: - 温度面板
+
+    private func thermalPanel(_ snapshot: SystemSnapshot) -> some View {
+        InfoPanel(title: "温度活动", subtitle: "最近 60 秒") {
+            let temperaturePoints = recent(viewModel.temperatureHistory, keyPath: \.timestamp)
+            PerformanceLineChart(
+                points: temperaturePoints.compactMap { entry in
+                    entry.socCelsius.map {
+                        LineChartPoint(
+                            timestamp: entry.timestamp,
+                            value: $0,
+                            series: "SoC",
+                            color: temperatureColor(entry.socCelsius)
+                        )
+                    }
+                },
+                yDomain: PerformanceLineChart.paddedDomain(
+                    values: temperaturePoints.compactMap(\.socCelsius)
+                ),
+                height: 160
+            )
+            HStack(spacing: 12) {
+                ChartLegendRow(
+                    title: "电池",
+                    value: Format.celsius(snapshot.temperature.batteryCelsius),
+                    color: .secondary
+                )
+                ChartLegendRow(
+                    title: "存储",
+                    value: Format.celsius(snapshot.temperature.storageCelsius),
+                    color: .secondary
+                )
+            }
+        }
+    }
+
     // MARK: - 功耗面板
 
     private func powerPanel(_ snapshot: SystemSnapshot) -> some View {
@@ -250,44 +323,8 @@ struct SystemDashboardView: View {
                 yDomain: PerformanceLineChart.safeDomain(
                     values: powerPoints.map(\.value)
                 ),
-                height: 160
+                height: 150
             )
-        }
-    }
-
-    // MARK: - 温度面板
-
-    private func thermalPanel(_ snapshot: SystemSnapshot) -> some View {
-        InfoPanel(title: "温度活动", subtitle: "最近 60 秒") {
-            let temperaturePoints = recent(viewModel.temperatureHistory, keyPath: \.timestamp)
-            PerformanceLineChart(
-                points: temperaturePoints.compactMap { entry in
-                    entry.socCelsius.map {
-                        LineChartPoint(
-                            timestamp: entry.timestamp,
-                            value: $0,
-                            series: "SoC",
-                            color: temperatureColor(entry.socCelsius)
-                        )
-                    }
-                },
-                yDomain: PerformanceLineChart.paddedDomain(
-                    values: temperaturePoints.compactMap(\.socCelsius)
-                ),
-                height: 160
-            )
-            HStack(spacing: 12) {
-                ChartLegendRow(
-                    title: "电池",
-                    value: Format.celsius(snapshot.temperature.batteryCelsius),
-                    color: .secondary
-                )
-                ChartLegendRow(
-                    title: "存储",
-                    value: Format.celsius(snapshot.temperature.storageCelsius),
-                    color: .secondary
-                )
-            }
         }
     }
 
@@ -370,210 +407,4 @@ struct SystemDashboardView: View {
     }
 
     private static let fanChartColors: [Color] = [.blue, .teal, .indigo, .cyan]
-
-    // MARK: - 网络面板
-
-    private func networkPanel(_ snapshot: SystemSnapshot) -> some View {
-        InfoPanel(title: "网络活动", subtitle: "最近 60 秒") {
-            VStack(alignment: .leading, spacing: 8) {
-                ChartLegendRow(
-                    title: "下载",
-                    value: Format.rate(snapshot.network.downloadRate),
-                    color: .blue
-                )
-                ChartLegendRow(
-                    title: "上传",
-                    value: Format.rate(snapshot.network.uploadRate),
-                    color: .green
-                )
-            }
-
-            let networkPoints = recent(viewModel.networkHistory, keyPath: \.timestamp).flatMap { entry in
-                [
-                    LineChartPoint(
-                        timestamp: entry.timestamp,
-                        value: entry.downloadRate / 1_048_576,
-                        series: "下载",
-                        color: .blue
-                    ),
-                    LineChartPoint(
-                        timestamp: entry.timestamp,
-                        value: entry.uploadRate / 1_048_576,
-                        series: "上传",
-                        color: .green
-                    ),
-                ]
-            }
-            PerformanceLineChart(
-                points: networkPoints,
-                yDomain: PerformanceLineChart.safeDomain(
-                    values: networkPoints.map(\.value), floor: 0.1
-                ),
-                height: 150
-            )
-            Text("速率单位：MB/s · 累计 ↓\(Format.bytes(snapshot.network.downloadTotal)) · ↑\(Format.bytes(snapshot.network.uploadTotal))")
-                .font(.caption2)
-                .foregroundStyle(.tertiary)
-                .lineLimit(1)
-                .minimumScaleFactor(0.8)
-        }
-    }
-
-    // MARK: - 磁盘面板
-
-    private func diskPanel(_ snapshot: SystemSnapshot) -> some View {
-        InfoPanel(title: "磁盘", subtitle: "当前") {
-            VStack(alignment: .leading, spacing: 10) {
-                HStack(alignment: .firstTextBaseline) {
-                    Text(Format.bytes(snapshot.disk.used))
-                        .font(.system(size: 24, weight: .bold, design: .rounded))
-                        .monospacedDigit()
-                    Text("已用 \(Format.percent(snapshot.disk.usedFraction * 100))")
-                        .font(.caption)
-                        .foregroundStyle(.secondary)
-                    Spacer()
-                }
-                PercentBar(
-                    fraction: snapshot.disk.usedFraction,
-                    color: diskColor(snapshot.disk.usedFraction)
-                )
-                HStack(spacing: 16) {
-                    Label("读 \(Format.rate(snapshot.disk.readRate))", systemImage: "arrow.down")
-                    Label("写 \(Format.rate(snapshot.disk.writeRate))", systemImage: "arrow.up")
-                }
-                .font(.caption)
-                .foregroundStyle(.secondary)
-                .lineLimit(1)
-                .minimumScaleFactor(0.8)
-                HStack {
-                    Text("可用 \(Format.bytes(snapshot.disk.available))")
-                    Spacer()
-                    Text("共 \(Format.bytes(snapshot.disk.total))")
-                }
-                .font(.caption)
-                .foregroundStyle(.secondary)
-            }
-        }
-    }
-
-    // MARK: - 电池面板
-
-    private func batteryPanel(_ snapshot: SystemSnapshot) -> some View {
-        InfoPanel(title: "电池", subtitle: batterySubtitle(snapshot.battery)) {
-            if let percent = snapshot.battery.percent {
-                HStack(spacing: 10) {
-                    batteryGauge(
-                        title: "电量",
-                        systemImage: batterySymbol(snapshot.battery),
-                        value: percent / 100,
-                        valueText: String(format: "%.0f%%", percent),
-                        tint: batteryPercentColor(percent)
-                    )
-                    batteryGauge(
-                        title: "最大容量",
-                        systemImage: "heart.text.square",
-                        value: snapshot.battery.healthPercent.map { Double($0) / 100 },
-                        valueText: snapshot.battery.healthPercent.map { "\($0)%" } ?? "—",
-                        tint: snapshot.battery.healthPercent.map { healthColor($0) } ?? .secondary
-                    )
-                    batteryGauge(
-                        title: "循环",
-                        systemImage: "arrow.triangle.2.circlepath",
-                        value: nil,
-                        valueText: snapshot.battery.cycleCount.map(String.init) ?? "—",
-                        tint: .secondary
-                    )
-                }
-
-                Divider()
-
-                VStack(spacing: 0) {
-                    batteryDetailRow("电源来源", systemImage: "powerplug",
-                        value: snapshot.battery.isExternalConnected == true ? "电源适配器" : "电池")
-                    Divider()
-                    batteryDetailRow("充电状态", systemImage: "bolt",
-                        value: snapshot.battery.isCharging ? "正在充电" : "未充电")
-                    Divider()
-                    batteryDetailRow("电压", systemImage: "waveform.path",
-                        value: snapshot.battery.voltageMillivolts.map { String(format: "%.2f V", Double($0) / 1_000) } ?? "—")
-                    Divider()
-                    batteryDetailRow("温度", systemImage: "thermometer.medium",
-                        value: Format.celsius(snapshot.temperature.batteryCelsius))
-                }
-            } else {
-                capabilityView(
-                    systemImage: "battery.slash",
-                    title: "未检测到电池",
-                    message: "这台 Mac 未报告内置电池。"
-                )
-            }
-        }
-    }
-
-    private func batterySubtitle(_ battery: BatteryUsage) -> String {
-        if battery.isCharging { return "充电中" }
-        if battery.isExternalConnected == true { return "已连接电源" }
-        return "使用电池"
-    }
-
-    private func batterySymbol(_ battery: BatteryUsage) -> String {
-        if battery.isCharging { return "battery.100percent.bolt" }
-        guard let percent = battery.percent else { return "battery.0percent" }
-        switch percent {
-        case 75...: return "battery.100percent"
-        case 50...: return "battery.75percent"
-        case 25...: return "battery.50percent"
-        default: return "battery.25percent"
-        }
-    }
-
-    private func batteryPercentColor(_ percent: Double) -> Color {
-        percent < 20 ? .red : (percent < 40 ? .orange : .green)
-    }
-
-    private func healthColor(_ percent: Int) -> Color {
-        percent < 70 ? .red : (percent < 80 ? .orange : .green)
-    }
-
-    private func batteryGauge(
-        title: String,
-        systemImage: String,
-        value: Double?,
-        valueText: String,
-        tint: Color
-    ) -> some View {
-        VStack(spacing: 4) {
-            Gauge(value: min(1, max(0, value ?? 0))) {
-                Label(title, systemImage: systemImage)
-            } currentValueLabel: {
-                Text(valueText)
-                    .font(.headline)
-                    .monospacedDigit()
-            }
-            .gaugeStyle(.accessoryCircularCapacity)
-            .tint(value == nil ? .secondary : tint)
-            .controlSize(.large)
-            .scaleEffect(0.95)
-            .frame(width: 82, height: 74)
-
-            Text(title)
-                .font(.caption.weight(.medium))
-                .lineLimit(1)
-                .minimumScaleFactor(0.8)
-        }
-        .frame(maxWidth: .infinity)
-    }
-
-    private func batteryDetailRow(_ title: String, systemImage: String, value: String) -> some View {
-        HStack(spacing: 10) {
-            Label(title, systemImage: systemImage)
-            Spacer(minLength: 12)
-            Text(value)
-                .foregroundStyle(.secondary)
-                .monospacedDigit()
-                .lineLimit(1)
-                .minimumScaleFactor(0.8)
-        }
-        .frame(minHeight: 32)
-    }
 }

@@ -3,9 +3,11 @@ import SwiftUI
 
 /// 系统信息视图
 /// 布局与内容丰富度参考 mac-scope 的「系统信息」页：
-/// 设备头部 + 分组表单（Mac / 处理器与内存 / 存储 / 显示器 / USB / 蓝牙 / Wi-Fi）
+/// 设备头部 + 分组表单（Mac / 处理器与内存 / 存储 / 电池 / 显示器 / USB / 蓝牙 / Wi-Fi）
 struct SystemInfoView: View {
     @EnvironmentObject private var viewModel: SystemMonitorViewModel
+    @State private var battery: BatteryUsage?
+    @State private var batteryTemperature: Double?
 
     var body: some View {
         ScrollView {
@@ -32,14 +34,25 @@ struct SystemInfoView: View {
                 .help("复制摘要")
                 .disabled(viewModel.hardware == nil)
 
-                Button {
-                    viewModel.refreshHardware()
-                } label: {
+                Button(action: refreshAll) {
                     Label("刷新", systemImage: "arrow.clockwise")
                 }
                 .help("刷新")
             }
         }
+        .task {
+            loadBattery()
+        }
+    }
+
+    private func refreshAll() {
+        viewModel.refreshHardware()
+        loadBattery()
+    }
+
+    private func loadBattery() {
+        battery = BatteryInfoService.read()
+        batteryTemperature = TemperatureReader.read().batteryCelsius
     }
 
     // MARK: - 设备头部
@@ -103,6 +116,14 @@ struct SystemInfoView: View {
                 infoRow("可用空间", value: Format.bytes(hardware.storageAvailable), systemImage: "internaldrive.fill")
                 infoRow("启动磁盘", value: hardware.bootVolumeName ?? "—", systemImage: "folder")
                 infoRow("序列号", value: hardware.serialNumber, systemImage: "number.square")
+            }
+
+            Section("电池") {
+                if let battery {
+                    batteryRows(battery)
+                } else {
+                    unavailableRow("未检测到电池。")
+                }
             }
 
             Section("显示器") {
@@ -215,6 +236,40 @@ struct SystemInfoView: View {
             }
         }
         .formStyle(.grouped)
+    }
+
+    // MARK: - 电池
+
+    @ViewBuilder
+    private func batteryRows(_ battery: BatteryUsage) -> some View {
+        statusRow(
+            "电源来源",
+            value: battery.isExternalConnected == true ? "电源适配器" : "电池",
+            systemImage: "powerplug",
+            color: battery.isExternalConnected == true ? .green : .secondary
+        )
+        statusRow(
+            "充电状态",
+            value: battery.isCharging ? "正在充电" : "未充电",
+            systemImage: "bolt",
+            color: battery.isCharging ? .green : .secondary
+        )
+        if let percent = battery.percent {
+            infoRow("当前电量", value: String(format: "%.0f%%", percent), systemImage: "battery.75percent")
+        }
+        if let health = battery.healthPercent {
+            infoRow("最大容量（健康度）", value: "\(health)%", systemImage: "heart.text.square")
+        }
+        if let cycles = battery.cycleCount {
+            infoRow("循环次数", value: String(cycles), systemImage: "arrow.triangle.2.circlepath")
+        }
+        if let voltage = battery.voltageMillivolts {
+            infoRow("电压", value: String(format: "%.2f V", Double(voltage) / 1_000), systemImage: "waveform.path")
+        }
+        if let amperage = battery.amperageMilliamps {
+            infoRow("电流", value: "\(amperage) mA", systemImage: "bolt.badge.a")
+        }
+        infoRow("温度", value: Format.celsius(batteryTemperature), systemImage: "thermometer.medium")
     }
 
     // MARK: - 行组件

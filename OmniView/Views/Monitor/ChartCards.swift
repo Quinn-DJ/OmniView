@@ -8,6 +8,7 @@ struct StatusMetricCard: View {
     let systemImage: String
     let value: String
     let detail: String
+    var detailLines: [String] = []
     let indicatorColor: Color
 
     var body: some View {
@@ -26,11 +27,21 @@ struct StatusMetricCard: View {
                     .monospacedDigit()
                     .lineLimit(1)
                     .minimumScaleFactor(0.7)
-                Text(detail)
-                    .font(.caption)
-                    .foregroundStyle(.secondary)
-                    .lineLimit(1)
-                    .minimumScaleFactor(0.8)
+                if detailLines.isEmpty {
+                    Text(detail)
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                        .lineLimit(1)
+                        .minimumScaleFactor(0.8)
+                } else {
+                    ForEach(detailLines, id: \.self) { line in
+                        Text(line)
+                            .font(.caption)
+                            .foregroundStyle(.secondary)
+                            .lineLimit(1)
+                            .minimumScaleFactor(0.8)
+                    }
+                }
             }
         }
         .frame(maxWidth: .infinity, minHeight: 82, alignment: .leading)
