@@ -18,7 +18,6 @@ struct SettingsView: View {
 
 struct ZJUSettingsTab: View {
     @EnvironmentObject private var viewModel: ZJUViewModel
-    @State private var isSecured = true
 
     var body: some View {
         Form {
@@ -49,28 +48,9 @@ struct ZJUSettingsTab: View {
                     TextField("学号", text: $viewModel.username)
                         .textFieldStyle(.roundedBorder)
                         .multilineTextAlignment(.leading)
-                    // 密码框：眼睛按钮悬浮于框内左侧，文字左对齐并避开按钮
-                    Group {
-                        if isSecured {
-                            SecureField("密码", text: $viewModel.password)
-                        } else {
-                            TextField("密码", text: $viewModel.password)
-                        }
-                    }
-                    .textFieldStyle(.roundedBorder)
-                    .multilineTextAlignment(.leading)
-                    .padding(.leading, 26)
-                    .overlay(alignment: .leading) {
-                        Button {
-                            isSecured.toggle()
-                        } label: {
-                            Image(systemName: isSecured ? "eye" : "eye.slash")
-                                .frame(width: 16)
-                        }
-                        .buttonStyle(.borderless)
-                        .padding(.leading, 5)
-                        .help(isSecured ? "显示密码" : "隐藏密码")
-                    }
+                    SecureField("密码", text: $viewModel.password)
+                        .textFieldStyle(.roundedBorder)
+                        .multilineTextAlignment(.leading)
                     if let error = viewModel.loginError {
                         Text(error)
                             .font(.caption)
