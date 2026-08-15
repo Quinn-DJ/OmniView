@@ -9,9 +9,11 @@ import SwiftUI
 struct SystemDashboardView: View {
     @EnvironmentObject private var viewModel: SystemMonitorViewModel
 
-    private let statusColumns = [
-        GridItem(.adaptive(minimum: 175, maximum: 250), spacing: 12),
-    ]
+    // 4 项简要指标：固定 4 等宽列，横向平均分布
+    private let statusColumns = Array(
+        repeating: GridItem(.flexible(), spacing: 12),
+        count: 4
+    )
     private let panelColumns = [
         GridItem(.flexible(), spacing: 12),
         GridItem(.flexible(), spacing: 12),
