@@ -129,7 +129,12 @@ final class DeepSeekService {
         config.timeoutIntervalForResource = 30
         config.waitsForConnectivity = true
         session = URLSession(configuration: config)
-        storedAPIKey = KeychainStore.load(account: "deepseek_api_key")
+        // 截图渲染模式不读取钥匙串，避免系统授权弹窗阻塞启动
+        if ProcessInfo.processInfo.arguments.contains("-renderScreenshots") {
+            storedAPIKey = nil
+        } else {
+            storedAPIKey = KeychainStore.load(account: "deepseek_api_key")
+        }
     }
 
     var hasAPIKey: Bool { !(storedAPIKey ?? "").isEmpty }

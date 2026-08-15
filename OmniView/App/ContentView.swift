@@ -30,9 +30,37 @@ struct ContentView: View {
             case .deepSeek: return "AI 监控"
             }
         }
+
+        /// 调试启动参数 `-initialSection` 使用的英文标识
+        var debugValue: String {
+            switch self {
+            case .calendar: return "calendar"
+            case .homework: return "homework"
+            case .courseware: return "courseware"
+            case .dashboard: return "dashboard"
+            case .systemInfo: return "systemInfo"
+            case .deepSeek: return "deepSeek"
+            }
+        }
     }
 
-    @State private var selection: Section? = .dashboard
+    @State private var selection: Section?
+
+    init(initialSection: Section? = nil) {
+        _selection = State(initialValue: initialSection ?? Self.defaultSection)
+    }
+
+    /// 调试启动参数：`-initialSection <key>`，可选值为 `debugValue`
+    private static var defaultSection: Section? {
+        let arguments = ProcessInfo.processInfo.arguments
+        guard let index = arguments.firstIndex(of: "-initialSection"),
+              arguments.indices.contains(index + 1),
+              let section = Section.allCases.first(where: { $0.debugValue == arguments[index + 1] })
+        else {
+            return .dashboard
+        }
+        return section
+    }
 
     var body: some View {
         NavigationSplitView {

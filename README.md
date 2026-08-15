@@ -4,6 +4,19 @@ macOS 菜单栏仪表盘：实时系统监控、ZJU 学习助手（日历 / 作�
 
 应用以菜单栏常驻运行（无 Dock 图标），使用 SwiftUI 编写，最低支持 macOS 14。
 
+## 界面预览
+
+<img src="docs/screenshots/dashboard.png" alt="系统监控仪表盘" width="1000">
+
+<img src="docs/screenshots/system-info.png" alt="系统信息" width="1000">
+
+<img src="docs/screenshots/deepseek.png" alt="DeepSeek 余额与用量（示例数据）" width="1000">
+
+菜单栏状态项与点击后的弹出面板：
+
+<img src="docs/screenshots/menu-bar.png" alt="菜单栏状态项" width="360">
+<img src="docs/screenshots/menu-bar-panel.png" alt="弹出面板" width="360">
+
 ## 功能
 
 ### 菜单栏
@@ -126,7 +139,9 @@ xcodebuild -project OmniView.xcodeproj -scheme OmniView -configuration Debug \
 - **菜单栏应用**：`LSUIElement` 为 true，无 Dock 图标；关闭主窗口不会退出，可随时从菜单栏重新打开。
 - **调试参数**：
   - `-debugShowWindow`：启动 3 秒后自动打开主窗口
+  - `-initialSection <key>`：指定主窗口初始页面（calendar / homework / courseware / dashboard / systemInfo / deepSeek）
   - `-skipAccountServices`：跳过账号服务（UI 测试用，避免钥匙串授权弹窗）
+  - `-renderScreenshots <输出目录>`：渲染主要界面为 PNG 后退出（用于生成 README 截图）
 - **隐私**：日历数据仅在本机读取，不上传；教务网凭据与 DeepSeek API Key 均保存在钥匙串中。
 - **权限**：除日历外，应用还可能请求蓝牙 / 本地网络访问权限，用于系统信息中的蓝牙状态与网络流量展示。
 

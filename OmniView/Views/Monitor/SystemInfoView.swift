@@ -332,8 +332,9 @@ struct SystemInfoView: View {
 
     private func copySummary() {
         guard let hardware = viewModel.hardware else { return }
+        let appVersion = Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String ?? "Unknown"
         let lines = [
-            "OmniView 0.1.0",
+            "OmniView \(appVersion)",
             "型号：\(hardware.modelName) (\(hardware.modelIdentifier))",
             "芯片：\(hardware.chip)",
             "CPU 核心：\(hardware.coreSummary)",
