@@ -108,8 +108,8 @@ ARCH=x86_64 ./scripts/build_dmg.sh                    # 指定其他架构（默
 2. **推送版本标签**：
 
 ```bash
-git tag v0.2.0
-git push origin v0.2.0
+git tag v0.2.1
+git push origin v0.2.1
 ```
 
 两种方式都会构建 arm64 DMG，并发布带 `OmniView-<版本>-arm64.dmg` 产物与自动生成 release notes 的 GitHub Release。
