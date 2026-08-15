@@ -17,7 +17,7 @@ final class SystemMonitorViewModel: ObservableObject {
     @Published private(set) var coolingHistory: [CoolingUsage] = []
 
     let maxHistoryCount = 900
-    let sampleInterval: TimeInterval = 2.0
+    let sampleInterval: TimeInterval = 0.5
 
     private let sampler = SystemSampler()
     private var timer: Timer?
