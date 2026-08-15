@@ -3,8 +3,8 @@ import SwiftUI
 
 /// 系统监控仪表盘
 /// 布局：
-///   - 顶部简要指标：CPU / 内存 / 温度 / 网络 / 磁盘（磁盘含容量与读写速率明细）
-///   - 下方 3×2 图表面板：CPU 活动、内存占用、网络活动 / 温度活动、功耗活动、散热
+///   - 顶部简要指标：CPU / 内存 / 温度 / 网络
+///   - 下方 3×2 图表面板：CPU 活动、内存占用、网络活动 / 温度活动、功耗活动、磁盘详情
 ///   - 电池信息已移至「系统信息」页
 struct SystemDashboardView: View {
     @EnvironmentObject private var viewModel: SystemMonitorViewModel
@@ -23,14 +23,14 @@ struct SystemDashboardView: View {
             VStack(spacing: 16) {
                 if let snapshot = viewModel.snapshot {
                     statusMetrics(snapshot)
-                    // 3×2 图表面板：第一行 CPU/内存/网络，第二行 温度/功耗/散热
+                    // 3×2 图表面板：第一行 CPU/内存/网络，第二行 温度/功耗/磁盘
                     LazyVGrid(columns: panelColumns, spacing: 12) {
                         cpuPanel(snapshot)
                         memoryPanel(snapshot)
                         networkPanel(snapshot)
                         thermalPanel(snapshot)
                         powerPanel(snapshot)
-                        coolingPanel(snapshot)
+                        diskPanel(snapshot)
                     }
                 } else {
                     ProgressView("正在采集系统指标…")
@@ -55,7 +55,7 @@ struct SystemDashboardView: View {
         }
     }
 
-    // MARK: - 简要指标行（CPU / 内存 / 温度 / 网络 / 磁盘）
+    // MARK: - 简要指标行（CPU / 内存 / 温度 / 网络）
 
     private func statusMetrics(_ snapshot: SystemSnapshot) -> some View {
         LazyVGrid(columns: statusColumns, spacing: 12) {
@@ -89,19 +89,6 @@ struct SystemDashboardView: View {
                 value: "↓ \(Format.rate(snapshot.network.downloadRate))",
                 detail: "↑ \(Format.rate(snapshot.network.uploadRate))",
                 indicatorColor: .blue
-            )
-
-            // 磁盘：详情并入简要卡片（容量 + 读写速率）
-            StatusMetricCard(
-                title: "磁盘",
-                systemImage: "internaldrive",
-                value: Format.percent(snapshot.disk.usedFraction * 100),
-                detail: "",
-                detailLines: [
-                    "已用 \(Format.bytes(snapshot.disk.used)) · 可用 \(Format.bytes(snapshot.disk.available))",
-                    "共 \(Format.bytes(snapshot.disk.total)) · 读 \(Format.rate(snapshot.disk.readRate)) · 写 \(Format.rate(snapshot.disk.writeRate))",
-                ],
-                indicatorColor: diskColor(snapshot.disk.usedFraction)
             )
         }
     }
@@ -328,83 +315,47 @@ struct SystemDashboardView: View {
         }
     }
 
-    // MARK: - 散热面板
+    // MARK: - 磁盘面板（详细信息）
 
-    private func coolingPanel(_ snapshot: SystemSnapshot) -> some View {
-        InfoPanel(title: "散热", subtitle: snapshot.cooling.state == .available ? "最近 60 秒" : "只读") {
-            switch snapshot.cooling.state {
-            case .available:
-                let fanPoints = recent(viewModel.coolingHistory, keyPath: \.timestamp).flatMap { cooling in
-                    cooling.fans.map { fan in
-                        LineChartPoint(
-                            timestamp: cooling.timestamp,
-                            value: fan.currentRPM,
-                            series: fan.name,
-                            color: Self.fanChartColors[fan.id % Self.fanChartColors.count]
-                        )
-                    }
+    private func diskPanel(_ snapshot: SystemSnapshot) -> some View {
+        InfoPanel(title: "磁盘", subtitle: "当前") {
+            VStack(alignment: .leading, spacing: 10) {
+                HStack(alignment: .firstTextBaseline) {
+                    Text(Format.bytes(snapshot.disk.used))
+                        .font(.system(size: 24, weight: .bold, design: .rounded))
+                        .monospacedDigit()
+                    Text("已用 \(Format.percent(snapshot.disk.usedFraction * 100))")
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                    Spacer()
                 }
-                PerformanceLineChart(
-                    points: fanPoints,
-                    yDomain: PerformanceLineChart.safeDomain(
-                        values: fanPoints.map(\.value), floor: 1_000
-                    ),
-                    height: 140
+                PercentBar(
+                    fraction: snapshot.disk.usedFraction,
+                    color: diskColor(snapshot.disk.usedFraction)
                 )
+                HStack {
+                    Text("可用 \(Format.bytes(snapshot.disk.available))")
+                    Spacer()
+                    Text("共 \(Format.bytes(snapshot.disk.total))")
+                }
+                .font(.caption)
+                .foregroundStyle(.secondary)
 
                 Divider()
-                fanDetails(snapshot.cooling)
-            case .fanless:
-                capabilityView(
-                    systemImage: "fan.slash",
-                    title: "无风扇 Mac",
-                    message: "这台 Mac 使用被动散热，不提供风扇转速。"
-                )
-            case .unavailable:
-                capabilityView(
-                    systemImage: "fan",
-                    title: "风扇遥测不可用",
-                    message: "无法读取此 Mac 的风扇转速。"
-                )
-            }
-        }
-    }
 
-    /// 窄列布局：每个风扇一行「名称 + 当前转速」，下方一行最低/目标/最高
-    private func fanDetails(_ cooling: CoolingUsage) -> some View {
-        VStack(alignment: .leading, spacing: 8) {
-            ForEach(cooling.fans) { fan in
-                VStack(alignment: .leading, spacing: 2) {
-                    HStack {
-                        Label(fan.name, systemImage: "fan")
-                            .font(.subheadline)
-                        Spacer()
-                        Text(Format.rpm(fan.currentRPM))
-                            .font(.subheadline.weight(.semibold))
-                            .monospacedDigit()
-                    }
-                    Text("最低 \(Format.rpm(fan.minimumRPM)) · 目标 \(Format.rpm(fan.targetRPM)) · 最高 \(Format.rpm(fan.maximumRPM))")
-                        .font(.caption2)
-                        .foregroundStyle(.secondary)
+                HStack(spacing: 16) {
+                    ChartLegendRow(
+                        title: "读取",
+                        value: Format.rate(snapshot.disk.readRate),
+                        color: .blue
+                    )
+                    ChartLegendRow(
+                        title: "写入",
+                        value: Format.rate(snapshot.disk.writeRate),
+                        color: .green
+                    )
                 }
             }
         }
     }
-
-    private func capabilityView(systemImage: String, title: String, message: String) -> some View {
-        VStack(spacing: 8) {
-            Image(systemName: systemImage)
-                .font(.system(size: 28, weight: .light))
-                .foregroundStyle(.secondary)
-            Text(title)
-                .font(.headline)
-            Text(message)
-                .font(.subheadline)
-                .foregroundStyle(.secondary)
-                .multilineTextAlignment(.center)
-        }
-        .frame(maxWidth: .infinity, minHeight: 150)
-    }
-
-    private static let fanChartColors: [Color] = [.blue, .teal, .indigo, .cyan]
 }
