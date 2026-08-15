@@ -10,7 +10,7 @@ struct SettingsView: View {
             DeepSeekSettingsTab()
                 .tabItem { Label("DeepSeek", systemImage: "brain") }
         }
-        .frame(width: 480, height: 320)
+        .frame(width: 480, height: 340)
     }
 }
 
@@ -36,6 +36,9 @@ struct ZJUSettingsTab: View {
                     LabeledContent("账号") {
                         Text(viewModel.username.isEmpty ? "—" : viewModel.username)
                             .textSelection(.enabled)
+                    }
+                    Button("退出登录", role: .destructive) {
+                        viewModel.logout()
                     }
                 }
             }
@@ -64,17 +67,6 @@ struct ZJUSettingsTab: View {
                             .font(.caption)
                             .foregroundStyle(.red)
                     }
-                }
-            }
-        }
-        .formStyle(.grouped)
-        .toolbar {
-            ToolbarItemGroup(placement: .primaryAction) {
-                if viewModel.isLoggedIn {
-                    Button("退出登录") {
-                        viewModel.logout()
-                    }
-                } else {
                     Button {
                         Task { await viewModel.login() }
                     } label: {
@@ -92,6 +84,7 @@ struct ZJUSettingsTab: View {
                 }
             }
         }
+        .formStyle(.grouped)
     }
 }
 
@@ -117,6 +110,9 @@ struct DeepSeekSettingsTab: View {
                         Text(maskedKey)
                             .textSelection(.enabled)
                     }
+                    Button("清除 API Key", role: .destructive) {
+                        viewModel.clearAPIKey()
+                    }
                 }
             }
 
@@ -130,23 +126,16 @@ struct DeepSeekSettingsTab: View {
                         .font(.caption)
                         .foregroundStyle(.red)
                 }
-            }
-        }
-        .formStyle(.grouped)
-        .toolbar {
-            ToolbarItemGroup(placement: .primaryAction) {
-                if viewModel.hasAPIKey {
-                    Button("清除", role: .destructive) {
-                        viewModel.clearAPIKey()
-                    }
-                }
-                Button("保存") {
+                Button {
                     viewModel.saveAPIKey()
+                } label: {
+                    Text("保存")
                 }
                 .buttonStyle(.borderedProminent)
                 .disabled(viewModel.apiKeyInput.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
             }
         }
+        .formStyle(.grouped)
     }
 
     private var maskedKey: String {
