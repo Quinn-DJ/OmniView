@@ -2,6 +2,7 @@
 # 构建 OmniView Release 并打包为 DMG
 # 用法: ./scripts/build_dmg.sh [输出路径]
 # 默认仅打包 arm64；如需其他架构: ARCH=x86_64 ./scripts/build_dmg.sh
+# 签名默认使用 ad-hoc（本机/个人分发）；可用 SIGN_IDENTITY / SIGN_STYLE / SIGN_TEAM 覆盖
 set -euo pipefail
 
 ROOT_DIR="$(cd "$(dirname "$0")/.." && pwd)"
@@ -9,6 +10,9 @@ cd "$ROOT_DIR"
 
 # 目标架构，默认 arm64
 TARGET_ARCH=${ARCH:-arm64}
+SIGN_IDENTITY=${SIGN_IDENTITY:--}
+SIGN_STYLE=${SIGN_STYLE:-Manual}
+SIGN_TEAM=${SIGN_TEAM:-}
 
 VERSION=$(/usr/libexec/PlistBuddy -c "Print :CFBundleShortVersionString" OmniView/Info.plist 2>/dev/null || echo "0.2.1")
 # Info.plist 中是 $(MARKETING_VERSION)，解析不到时用 project.yml 中的版本
@@ -21,7 +25,10 @@ STAGING_DIR="$ROOT_DIR/build/dmg-root"
 echo "==> 1/3 构建 Release 版本 ($VERSION, 架构: $TARGET_ARCH)"
 xcodebuild -project OmniView.xcodeproj -scheme OmniView \
     -configuration Release -derivedDataPath "build/Release-$TARGET_ARCH" \
-    build ARCHS="$TARGET_ARCH" ONLY_ACTIVE_ARCH=YES >/dev/null
+    build ARCHS="$TARGET_ARCH" ONLY_ACTIVE_ARCH=YES \
+    CODE_SIGN_IDENTITY="$SIGN_IDENTITY" \
+    CODE_SIGN_STYLE="$SIGN_STYLE" \
+    DEVELOPMENT_TEAM="$SIGN_TEAM" >/dev/null
 
 APP_PATH="$ROOT_DIR/build/Release-$TARGET_ARCH/Build/Products/Release/OmniView.app"
 if [[ ! -d "$APP_PATH" ]]; then
