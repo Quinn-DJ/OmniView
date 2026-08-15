@@ -1,6 +1,16 @@
 # OmniView
 
-macOS 原生仪表盘应用（SwiftUI），集学习、系统监控与 AI 监控于一体的 Dashboard。
+macOS 原生菜单栏仪表盘应用（SwiftUI），集学习、系统监控与 AI 监控于一体的 Dashboard。
+
+应用以**菜单栏方式**常驻运行（无 Dock 图标）：
+- 菜单栏状态项以 **3 列 × 2 行**显示（每 2 秒刷新）：
+  ```
+  ↑ 1.2M  CPU   内存
+  ↓ 38K   21%   67%
+  ```
+  （第一列 ↑↓ 网络速率；第二列 CPU、第三列内存，标签在上、数值在下；字号可改 `MenuBarLabel.fontSize`）
+- 点击状态项弹出面板：CPU / 内存 / 网络 三项指标卡片 + 「打开完整界面」按钮
+- 「打开完整界面」打开完整的 Dashboard 窗口（学习 / 系统监控 / AI 监控）
 
 ## 功能
 
@@ -44,7 +54,7 @@ open build/DerivedData/Build/Products/Debug/OmniView.app
 ## 打包 DMG
 
 ```bash
-./scripts/build_dmg.sh                                  # 输出 build/OmniView-0.1.0-arm64.dmg
+./scripts/build_dmg.sh                                  # 输出 build/OmniView-0.2.0-arm64.dmg
 ./scripts/build_dmg.sh ~/Desktop/OmniView.dmg           # 自定义输出路径
 ARCH=x86_64 ./scripts/build_dmg.sh                      # 其他架构（默认 arm64）
 ```
@@ -71,5 +81,19 @@ git push origin v0.2.0
 ## 说明
 
 - 应用未开启沙盒（与 Stats / iStat Menus 等系统监控工具一致），以便读取 SMC / IOKit 数据
+- 应用为菜单栏应用（`LSUIElement`），无 Dock 图标；关闭主窗口不会退出，可随时从菜单栏重新打开
+- 调试参数：`-debugShowWindow`（启动 3 秒后自动打开主窗口）、`-skipAccountServices`（跳过账号服务，UI 测试用）
 - 首次启动会请求「日历」访问权限；日历数据仅在本机读取，不上传
 - ZJU 登录凭据与 DeepSeek API Key 均保存在钥匙串中
+
+## 测试
+
+```bash
+# 单元测试
+xcodebuild -project OmniView.xcodeproj -scheme OmniView -configuration Debug \
+  -derivedDataPath build/DerivedData test -only-testing:OmniViewTests
+
+# UI 测试（验证菜单栏状态项 → 弹出面板 → 打开完整界面 全流程）
+xcodebuild -project OmniView.xcodeproj -scheme OmniView -configuration Debug \
+  -derivedDataPath build/DerivedData test -only-testing:OmniViewUITests
+```

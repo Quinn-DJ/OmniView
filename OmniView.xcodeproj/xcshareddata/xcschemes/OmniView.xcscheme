@@ -50,6 +50,17 @@
                ReferencedContainer = "container:OmniView.xcodeproj">
             </BuildableReference>
          </TestableReference>
+         <TestableReference
+            skipped = "NO"
+            parallelizable = "NO">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "6CA62DD1A8F5F1A457A837B0"
+               BuildableName = "OmniViewUITests.xctest"
+               BlueprintName = "OmniViewUITests"
+               ReferencedContainer = "container:OmniView.xcodeproj">
+            </BuildableReference>
+         </TestableReference>
       </Testables>
       <CommandLineArguments>
       </CommandLineArguments>

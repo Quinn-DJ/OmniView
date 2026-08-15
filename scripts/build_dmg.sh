@@ -10,7 +10,7 @@ cd "$ROOT_DIR"
 # 目标架构，默认 arm64
 TARGET_ARCH=${ARCH:-arm64}
 
-VERSION=$(/usr/libexec/PlistBuddy -c "Print :CFBundleShortVersionString" OmniView/Info.plist 2>/dev/null || echo "0.1.0")
+VERSION=$(/usr/libexec/PlistBuddy -c "Print :CFBundleShortVersionString" OmniView/Info.plist 2>/dev/null || echo "0.2.0")
 # Info.plist 中是 $(MARKETING_VERSION)，解析不到时用 project.yml 中的版本
 if [[ "$VERSION" == *'$('* ]]; then
     VERSION=$(grep -E 'MARKETING_VERSION' project.yml | head -1 | sed -E 's/.*: *"([^"]+)".*/\1/')

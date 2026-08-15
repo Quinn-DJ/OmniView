@@ -18,7 +18,7 @@ settings:
     GCC_TREAT_WARNINGS_AS_ERRORS: "NO"
     SWIFT_TREAT_WARNINGS_AS_ERRORS: "NO"
     CURRENT_PROJECT_VERSION: "1"
-    MARKETING_VERSION: "0.1.0"
+    MARKETING_VERSION: "0.2.0"
 targets:
   OmniView:
     type: application
@@ -41,6 +41,7 @@ targets:
     scheme:
       testTargets:
         - OmniViewTests
+        - OmniViewUITests
   OmniViewTests:
     type: bundle.unit-test
     platform: macOS
@@ -54,3 +55,15 @@ targets:
         GENERATE_INFOPLIST_FILE: "YES"
         TEST_HOST: $(BUILT_PRODUCTS_DIR)/OmniView.app/Contents/MacOS/OmniView
         BUNDLE_LOADER: $(TEST_HOST)
+  OmniViewUITests:
+    type: bundle.ui-testing
+    platform: macOS
+    sources:
+      - path: OmniViewUITests
+    dependencies:
+      - target: OmniView
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.quinn.omniview.uitests
+        GENERATE_INFOPLIST_FILE: "YES"
+        TEST_TARGET_NAME: OmniView

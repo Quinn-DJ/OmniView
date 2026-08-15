@@ -2,31 +2,42 @@ import SwiftUI
 
 @main
 struct OmniViewApp: App {
+    @NSApplicationDelegateAdaptor(AppDelegate.self) private var appDelegate
+
     @StateObject private var systemMonitor = SystemMonitorViewModel()
     @StateObject private var calendar = CalendarViewModel()
     @StateObject private var zju = ZJUViewModel()
     @StateObject private var deepSeek = DeepSeekViewModel()
 
     var body: some Scene {
-        WindowGroup {
-            ContentView()
+        // 将视图模型注入应用代理与主窗口管理器（body 在启动时求值）
+        appDelegate.systemMonitor = systemMonitor
+        appDelegate.calendar = calendar
+        appDelegate.zju = zju
+        appDelegate.deepSeek = deepSeek
+        MainWindowManager.shared.configure(
+            systemMonitor: systemMonitor,
+            calendar: calendar,
+            zju: zju,
+            deepSeek: deepSeek
+        )
+
+        // 菜单栏：3 列指标文本，点击弹出面板
+        return MenuBarExtra {
+            MenuBarPanelView()
                 .environmentObject(systemMonitor)
-                .environmentObject(calendar)
+        } label: {
+            MenuBarLabel()
+                .environmentObject(systemMonitor)
+        }
+        .menuBarExtraStyle(.window)
+
+        // 设置窗口：菜单栏「OmniView → 设置…」(⌘,)
+        Settings {
+            SettingsView()
                 .environmentObject(zju)
                 .environmentObject(deepSeek)
-                .frame(minWidth: 1000, minHeight: 640)
-                .task {
-                    systemMonitor.start()
-                    systemMonitor.refreshHardware()
-                    await calendar.requestAccessIfNeeded()
-                    await zju.checkLoginState()
-                    if zju.hasSavedAccount {
-                        await zju.loginWithSavedAccount()
-                        await zju.refreshHomework()
-                    }
-                }
         }
-        .windowStyle(.titleBar)
         .commands {
             CommandGroup(after: .newItem) {
                 Button("刷新全部数据") {
@@ -38,13 +49,6 @@ struct OmniViewApp: App {
                 }
                 .keyboardShortcut("r", modifiers: [.command, .shift])
             }
-        }
-
-        // 设置窗口：菜单栏「OmniView → 设置…」(⌘,)
-        Settings {
-            SettingsView()
-                .environmentObject(zju)
-                .environmentObject(deepSeek)
         }
     }
 }
