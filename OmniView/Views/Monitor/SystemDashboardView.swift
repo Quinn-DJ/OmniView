@@ -361,3 +361,13 @@ struct SystemDashboardView: View {
         }
     }
 }
+
+// MARK: - Previews
+
+#Preview("系统监控") {
+    let viewModel = SystemMonitorViewModel()
+    return SystemDashboardView()
+        .environmentObject(viewModel)
+        .frame(width: 1100, height: 800)
+        .task { viewModel.sampleNow() }
+}

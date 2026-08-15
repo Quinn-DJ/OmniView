@@ -282,3 +282,11 @@ struct DeepSeekDashboardView: View {
         )
     }
 }
+
+// MARK: - Previews
+
+#Preview("DeepSeek 看板") {
+    DeepSeekDashboardView()
+        .environmentObject(DeepSeekViewModel())
+        .frame(width: 900, height: 700)
+}

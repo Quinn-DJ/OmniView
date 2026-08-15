@@ -35,7 +35,6 @@
 		ECE42DD7C457D18E4B430651 /* SystemMetrics.swift in Sources */ = {isa = PBXBuildFile; fileRef = A096E7EFDCCA848B3FBD1F84 /* SystemMetrics.swift */; };
 		F0BC6770C5FDDEB86279985F /* CalendarViews.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC73367D8A4C19F82D1F30DC /* CalendarViews.swift */; };
 		F2FFCA0BBD689A43EDF6C78F /* HardwareInfoService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7BA053E377660A58B3C32E45 /* HardwareInfoService.swift */; };
-		F45295B55C3F5017551FF411 /* Previews.swift in Sources */ = {isa = PBXBuildFile; fileRef = D4BEE57F37C76192A2B6CEA3 /* Previews.swift */; };
 		F75DA73F8FBF15913E41B7DC /* CalendarService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8C53610740213437592F8B44 /* CalendarService.swift */; };
 		FC75D125D0DDA91BB2AC179A /* BigUIntTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F29AEA3C21EB06B211ADF57A /* BigUIntTests.swift */; };
 /* End PBXBuildFile section */
@@ -80,7 +79,6 @@
 		C99A0F5EEA9B54FADD914B6E /* OmniView.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = OmniView.entitlements; sourceTree = "<group>"; };
 		CD20B958F1F9473CE4CDE1B0 /* DeepSeekDashboardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeepSeekDashboardView.swift; sourceTree = "<group>"; };
 		D3858F6EB12559DF3E293138 /* TemperatureReader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TemperatureReader.swift; sourceTree = "<group>"; };
-		D4BEE57F37C76192A2B6CEA3 /* Previews.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Previews.swift; sourceTree = "<group>"; };
 		D4C3F252161C9CEC430B6F6C /* BigUInt.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BigUInt.swift; sourceTree = "<group>"; };
 		DAAA0F06ED9B4590E0F196B0 /* ZJUViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZJUViewModel.swift; sourceTree = "<group>"; };
 		EC73367D8A4C19F82D1F30DC /* CalendarViews.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalendarViews.swift; sourceTree = "<group>"; };
@@ -147,7 +145,6 @@
 				453646727E09A068F9EF030A /* Learning */,
 				2BD3A516DC9E6BD11E3B1EE9 /* Monitor */,
 				85C62A459ABB85D17E1CC041 /* Settings */,
-				D4BEE57F37C76192A2B6CEA3 /* Previews.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -362,7 +359,6 @@
 				7DCFBA911730EA5E6FB68AD9 /* KeychainStore.swift in Sources */,
 				A5540130D55AB9F44D5041FB /* OmniViewApp.swift in Sources */,
 				23339E9AF81FF33DDD487C4B /* PowerMetricsReader.swift in Sources */,
-				F45295B55C3F5017551FF411 /* Previews.swift in Sources */,
 				635D23A9A0513E6243492BB6 /* SMCReader.swift in Sources */,
 				E241A8ECFDB3FB6F97C6C148 /* SettingsView.swift in Sources */,
 				8182A28E498DFC49EE6897FE /* SystemDashboardView.swift in Sources */,

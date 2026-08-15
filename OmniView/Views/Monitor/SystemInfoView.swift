@@ -347,3 +347,13 @@ struct SystemInfoView: View {
         NSPasteboard.general.setString(lines.joined(separator: "\n"), forType: .string)
     }
 }
+
+// MARK: - Previews
+
+#Preview("系统信息") {
+    let viewModel = SystemMonitorViewModel()
+    return SystemInfoView()
+        .environmentObject(viewModel)
+        .frame(width: 900, height: 800)
+        .task { viewModel.refreshHardware() }
+}

@@ -61,3 +61,14 @@ struct ContentView: View {
         }
     }
 }
+
+// MARK: - Previews
+
+#Preview("主界面") {
+    ContentView()
+        .environmentObject(SystemMonitorViewModel())
+        .environmentObject(CalendarViewModel())
+        .environmentObject(ZJUViewModel())
+        .environmentObject(DeepSeekViewModel())
+        .frame(width: 1100, height: 700)
+}

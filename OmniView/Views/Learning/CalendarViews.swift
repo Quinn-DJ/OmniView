@@ -429,3 +429,11 @@ struct MonthView: View {
         )
     }
 }
+
+// MARK: - Previews
+
+#Preview("日历") {
+    CalendarView()
+        .environmentObject(CalendarViewModel())
+        .frame(width: 1100, height: 700)
+}

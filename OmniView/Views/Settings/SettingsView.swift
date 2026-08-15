@@ -49,6 +49,13 @@ struct ZJUSettingsTab: View {
                     TextField("学号", text: $viewModel.username)
                         .padding(.leading, 30)
                     HStack(spacing: 6) {
+                        Group {
+                            if isSecured {
+                                SecureField("统一身份认证密码", text: $viewModel.password)
+                            } else {
+                                TextField("统一身份认证密码", text: $viewModel.password)
+                            }
+                        }
                         Button {
                             isSecured.toggle()
                         } label: {
@@ -57,13 +64,6 @@ struct ZJUSettingsTab: View {
                         }
                         .buttonStyle(.borderless)
                         .help(isSecured ? "显示密码" : "隐藏密码")
-                        Group {
-                            if isSecured {
-                                SecureField("统一身份认证密码", text: $viewModel.password)
-                            } else {
-                                TextField("统一身份认证密码", text: $viewModel.password)
-                            }
-                        }
                     }
                     if let error = viewModel.loginError {
                         Text(error)
@@ -163,4 +163,12 @@ struct DeepSeekSettingsTab: View {
         let suffix = stored.suffix(4)
         return "\(prefix)••••••\(suffix)"
     }
+}
+
+// MARK: - Previews
+
+#Preview("设置") {
+    SettingsView()
+        .environmentObject(ZJUViewModel())
+        .environmentObject(DeepSeekViewModel())
 }

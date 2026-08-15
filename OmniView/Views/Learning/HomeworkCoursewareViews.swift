@@ -349,3 +349,17 @@ struct ZJULoginView: View {
         .frame(maxWidth: .infinity, maxHeight: .infinity)
     }
 }
+
+// MARK: - Previews
+
+#Preview("作业待办") {
+    HomeworkView()
+        .environmentObject(ZJUViewModel())
+        .frame(width: 900, height: 600)
+}
+
+#Preview("课件") {
+    CoursewareView()
+        .environmentObject(ZJUViewModel())
+        .frame(width: 900, height: 600)
+}
