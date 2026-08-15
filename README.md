@@ -53,6 +53,21 @@ ARCH=x86_64 ./scripts/build_dmg.sh                      # 其他架构（默认 
 **默认仅打包 arm64**（Apple Silicon 原生），可通过 `ARCH` 环境变量指定其他架构。
 应用为临时签名（ad-hoc），仅供本机/个人使用；如需分发给他人，请配置开发者签名后重新打包。
 
+## 发布 GitHub Release（自动化）
+
+配置了 GitHub Actions（`.github/workflows/release.yml`），两种触发方式：
+
+```bash
+# 方式一：手动触发（推荐）— 自动读取版本号、打 tag、构建 DMG、发布
+#   GitHub 仓库页面 → Actions → Release → Run workflow
+
+# 方式二：推送版本标签
+git tag v0.2.0
+git push origin v0.2.0
+```
+
+流程：读取 `project.yml` 的 `MARKETING_VERSION` → 构建 arm64 DMG → 创建 `v<版本>` 标签 → 发布 GitHub Release 并附上 `OmniView-<版本>-arm64.dmg` 产物、自动生成 release notes。
+
 ## 说明
 
 - 应用未开启沙盒（与 Stats / iStat Menus 等系统监控工具一致），以便读取 SMC / IOKit 数据
