@@ -47,23 +47,18 @@ struct ZJUSettingsTab: View {
                 Section("登录学在浙大") {
                     // 学号与密码文本框对称对齐：学号左侧留出与眼睛按钮等宽的占位
                     TextField("学号", text: $viewModel.username)
-                        .padding(.leading, 30)
+                        .textFieldStyle(.roundedBorder)
+                        .padding(.leading, 10)
                     HStack(spacing: 6) {
                         Group {
                             if isSecured {
-                                SecureField("统一身份认证密码", text: $viewModel.password)
+                                SecureField("密码", text: $viewModel.password)
                             } else {
-                                TextField("统一身份认证密码", text: $viewModel.password)
+                                TextField("密码", text: $viewModel.password)
                             }
                         }
-                        Button {
-                            isSecured.toggle()
-                        } label: {
-                            Image(systemName: isSecured ? "eye" : "eye.slash")
-                                .frame(width: 16)
-                        }
-                        .buttonStyle(.borderless)
-                        .help(isSecured ? "显示密码" : "隐藏密码")
+                        .textFieldStyle(.roundedBorder)
+                        .padding(.leading, 10)
                     }
                     if let error = viewModel.loginError {
                         Text(error)
@@ -133,6 +128,7 @@ struct DeepSeekSettingsTab: View {
                             .allowsHitTesting(false)
                     }
                     SecureField("", text: $viewModel.apiKeyInput)
+                        .textFieldStyle(.roundedBorder)
                 }
                 Text("API Key 仅保存在本机钥匙串中，用于查询 DeepSeek 官方余额与用量接口。")
                     .font(.caption)
