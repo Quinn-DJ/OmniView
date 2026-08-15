@@ -48,9 +48,11 @@ struct ZJUSettingsTab: View {
                     TextField("学号", text: $viewModel.username)
                         .textFieldStyle(.roundedBorder)
                         .multilineTextAlignment(.leading)
+                        .padding(.horizontal, 5)
                     SecureField("密码", text: $viewModel.password)
                         .textFieldStyle(.roundedBorder)
                         .multilineTextAlignment(.leading)
+                        .padding(.horizontal, 5)
                     if let error = viewModel.loginError {
                         Text(error)
                             .font(.caption)
@@ -111,18 +113,11 @@ struct DeepSeekSettingsTab: View {
             Section(viewModel.hasAPIKey ? "更新 API Key" : "配置 API Key") {
                 // 密码类型文本框 + 未输入时的浅色小字占位提示（左对齐）
                 ZStack(alignment: .leading) {
-                    if viewModel.apiKeyInput.isEmpty {
-                        Text("sk-...")
-                            .font(.caption)
-                            .foregroundStyle(.tertiary)
-                            .padding(.leading, 7)
-                            .allowsHitTesting(false)
-                    }
-                    SecureField("", text: $viewModel.apiKeyInput)
+                    SecureField("DeepSeek API Key", text: $viewModel.apiKeyInput)
                         .textFieldStyle(.roundedBorder)
                         .multilineTextAlignment(.leading)
                 }
-                Text("API Key 仅保存在本机钥匙串中，用于查询 DeepSeek 官方余额与用量接口。")
+                Text("API Key 仅保存在本机钥匙串中")
                     .font(.caption)
                     .foregroundStyle(.secondary)
                 if let error = viewModel.errorMessage {
