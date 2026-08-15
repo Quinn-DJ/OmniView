@@ -9,7 +9,7 @@ final class SystemMonitorViewModel: ObservableObject {
     @Published var isSampling = false
     @Published var sampleError: String?
 
-    // 历史数据（每 2 秒一个采样点，保留 30 分钟）
+    // 历史数据（每秒一个采样点，保留 15 分钟）
     @Published private(set) var cpuHistory: [CPUSample] = []
     @Published private(set) var networkHistory: [NetworkUsage] = []
     @Published private(set) var powerHistory: [PowerUsage] = []
