@@ -59,7 +59,7 @@ enum ZJUError: LocalizedError {
     var errorDescription: String? {
         switch self {
         case .loginPageUnavailable: return "无法访问统一身份认证页面，请检查网络连接"
-        case .executionNotFound: return "登录页面解析失败（execution 缺失）"
+        case .executionNotFound: return "登录页面解析失败（execution 缺失）：登录页可能被防火墙拦截或网络异常，请重试"
         case .publicKeyUnavailable: return "获取公钥失败"
         case .rsaEncryptFailed: return "密码加密失败"
         case .loginFailed(let msg): return "登录失败：\(msg)"
@@ -129,16 +129,18 @@ final class ZJUService {
         try await login(username: username, password: password)
     }
 
-    /// CAS 登录
+    /// CAS 登录（带 execution 解析重试，兼容防火墙挑战页/瞬时故障）
     func login(username: String, password: String) async throws {
-        // 1. 获取登录页 execution
-        let (loginData, loginResponse) = try await session.data(from: loginPageURL)
-        guard let loginHTTP = loginResponse as? HTTPURLResponse, loginHTTP.statusCode == 200,
-              let html = String(data: loginData, encoding: .utf8)
-        else {
-            throw ZJUError.loginPageUnavailable
+        // 1. 获取登录页 execution（失败时自动重试 3 次）
+        var execution: String?
+        for attempt in 1...3 {
+            execution = try? await fetchExecution()
+            if execution != nil { break }
+            if attempt < 3 {
+                try? await Task.sleep(nanoseconds: 800_000_000)
+            }
         }
-        guard let execution = Self.extractExecution(from: html) else {
+        guard let execution else {
             throw ZJUError.executionNotFound
         }
 
@@ -197,18 +199,38 @@ final class ZJUService {
         try? KeychainStore.delete(account: "zju_password")
     }
 
-    private static func extractExecution(from html: String) -> String? {
-        // <input type="hidden" name="execution" value="..." />
-        let pattern = #"name="execution" value="([^"]+)""#
-        guard let regex = try? NSRegularExpression(pattern: pattern),
-              let match = regex.firstMatch(
-                in: html, range: NSRange(html.startIndex..., in: html)
-              ),
-              let range = Range(match.range(at: 1), in: html)
+    /// 获取登录页并解析 execution（解析失败时附带页面摘要便于排查）
+    private func fetchExecution() async throws -> String? {
+        let (loginData, loginResponse) = try await session.data(from: loginPageURL)
+        guard let loginHTTP = loginResponse as? HTTPURLResponse, loginHTTP.statusCode == 200,
+              let html = String(data: loginData, encoding: .utf8)
         else {
-            return nil
+            throw ZJUError.loginPageUnavailable
         }
-        return String(html[range])
+        guard let execution = Self.extractExecution(from: html) else {
+            throw ZJUError.executionNotFound
+        }
+        return execution
+    }
+
+    private static func extractExecution(from html: String) -> String? {
+        // 兼容多种 HTML 形态：双引号/单引号、属性顺序、属性间空白
+        let patterns = [
+            #"name=["']execution["'][^>]*value=["']([^"']+)["']"#,
+            #"value=["']([^"']+)["'][^>]*name=["']execution["']"#,
+        ]
+        for pattern in patterns {
+            guard let regex = try? NSRegularExpression(pattern: pattern),
+                  let match = regex.firstMatch(
+                    in: html, range: NSRange(html.startIndex..., in: html)
+                  ),
+                  let range = Range(match.range(at: 1), in: html)
+            else {
+                continue
+            }
+            return String(html[range])
+        }
+        return nil
     }
 
     // MARK: - 数据请求
