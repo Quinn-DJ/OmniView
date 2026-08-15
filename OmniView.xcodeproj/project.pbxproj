@@ -31,6 +31,7 @@
 		BAF6DC7BC173860D1B738A38 /* HomeworkCoursewareViews.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D3EAF776973C6A2C68AC7AB /* HomeworkCoursewareViews.swift */; };
 		C1A3E29139E600609BA3D131 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 3AEE73713828C55A2E8891FF /* Assets.xcassets */; };
 		C1EC035190FAA261AE76F3CB /* DeepSeekModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B720DD8057F7E5E87267AB8A /* DeepSeekModelTests.swift */; };
+		E241A8ECFDB3FB6F97C6C148 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 558A3954FF919E7089A45532 /* SettingsView.swift */; };
 		ECE42DD7C457D18E4B430651 /* SystemMetrics.swift in Sources */ = {isa = PBXBuildFile; fileRef = A096E7EFDCCA848B3FBD1F84 /* SystemMetrics.swift */; };
 		F0BC6770C5FDDEB86279985F /* CalendarViews.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC73367D8A4C19F82D1F30DC /* CalendarViews.swift */; };
 		F2FFCA0BBD689A43EDF6C78F /* HardwareInfoService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7BA053E377660A58B3C32E45 /* HardwareInfoService.swift */; };
@@ -58,6 +59,7 @@
 		35110F0BB02F9520DEB3F8C6 /* OmniViewApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OmniViewApp.swift; sourceTree = "<group>"; };
 		37590ADB9A2A32B760BFE451 /* OmniViewTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = OmniViewTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		3AEE73713828C55A2E8891FF /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		558A3954FF919E7089A45532 /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
 		5B3E740C3E1544DDC855AA51 /* SystemMonitorViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SystemMonitorViewModel.swift; sourceTree = "<group>"; };
 		60D266445B546166F7297B73 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
 		6AB7FA7B3CF6C69ADBD0E057 /* FormatTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FormatTests.swift; sourceTree = "<group>"; };
@@ -142,6 +144,7 @@
 				0D408421B520666A1A8D9F8B /* AI */,
 				453646727E09A068F9EF030A /* Learning */,
 				2BD3A516DC9E6BD11E3B1EE9 /* Monitor */,
+				85C62A459ABB85D17E1CC041 /* Settings */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -162,6 +165,14 @@
 				37590ADB9A2A32B760BFE451 /* OmniViewTests.xctest */,
 			);
 			name = Products;
+			sourceTree = "<group>";
+		};
+		85C62A459ABB85D17E1CC041 /* Settings */ = {
+			isa = PBXGroup;
+			children = (
+				558A3954FF919E7089A45532 /* SettingsView.swift */,
+			);
+			path = Settings;
 			sourceTree = "<group>";
 		};
 		893AA575FE1E23DB55B8EECF /* Models */ = {
@@ -349,6 +360,7 @@
 				A5540130D55AB9F44D5041FB /* OmniViewApp.swift in Sources */,
 				23339E9AF81FF33DDD487C4B /* PowerMetricsReader.swift in Sources */,
 				635D23A9A0513E6243492BB6 /* SMCReader.swift in Sources */,
+				E241A8ECFDB3FB6F97C6C148 /* SettingsView.swift in Sources */,
 				8182A28E498DFC49EE6897FE /* SystemDashboardView.swift in Sources */,
 				961E1554DA81A74F7313D81A /* SystemInfoView.swift in Sources */,
 				ECE42DD7C457D18E4B430651 /* SystemMetrics.swift in Sources */,

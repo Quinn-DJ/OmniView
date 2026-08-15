@@ -35,7 +35,7 @@ struct DeepSeekDashboardView: View {
         }
     }
 
-    // MARK: - 未配置 API Key
+    // MARK: - 未配置 API Key（引导前往「设置」）
 
     private var apiKeyPrompt: some View {
         VStack(spacing: 16) {
@@ -44,22 +44,17 @@ struct DeepSeekDashboardView: View {
                 .foregroundStyle(.tint)
             Text("配置 DeepSeek API Key")
                 .font(.title2.weight(.semibold))
-            Text("API Key 将安全存储在 macOS 钥匙串中，仅用于向 DeepSeek 官方 API 查询余额与用量。")
+            Text("请在「设置 → DeepSeek」中配置 API Key。Key 将安全存储在 macOS 钥匙串中，仅用于向 DeepSeek 官方 API 查询余额与用量。")
                 .font(.subheadline)
                 .foregroundStyle(.secondary)
                 .multilineTextAlignment(.center)
                 .frame(maxWidth: 420)
-            HStack {
-                SecureField("sk-…", text: $viewModel.apiKeyInput)
-                    .textFieldStyle(.roundedBorder)
-                    .frame(width: 320)
-                Button("保存") {
-                    viewModel.saveAPIKey()
-                    Task { await viewModel.refresh() }
-                }
-                .buttonStyle(.borderedProminent)
-                .disabled(viewModel.apiKeyInput.trimmingCharacters(in: .whitespaces).isEmpty)
+            Button {
+                openSettings()
+            } label: {
+                Label("打开设置…", systemImage: "gearshape")
             }
+            .buttonStyle(.borderedProminent)
             if let error = viewModel.errorMessage {
                 Text(error)
                     .font(.caption)
@@ -67,6 +62,10 @@ struct DeepSeekDashboardView: View {
             }
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
+    }
+
+    private func openSettings() {
+        NSApp.sendAction(Selector(("showSettingsWindow:")), to: nil, from: nil)
     }
 
     // MARK: - 看板

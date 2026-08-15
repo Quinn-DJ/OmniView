@@ -319,17 +319,14 @@ struct UploadRow: View {
     }
 }
 
-// MARK: - 登录视图
+// MARK: - 未登录提示（引导前往「设置」）
 
 struct ZJULoginView: View {
-    @EnvironmentObject private var viewModel: ZJUViewModel
     let title: String
     let subtitle: String
 
-    @State private var isSecured = true
-
     var body: some View {
-        VStack(spacing: 20) {
+        VStack(spacing: 16) {
             Image(systemName: "graduationcap.fill")
                 .font(.system(size: 44))
                 .foregroundStyle(.tint)
@@ -338,52 +335,20 @@ struct ZJULoginView: View {
             Text(subtitle)
                 .font(.subheadline)
                 .foregroundStyle(.secondary)
-
-            VStack(spacing: 12) {
-                TextField("学号", text: $viewModel.username)
-                    .textFieldStyle(.roundedBorder)
-                    .frame(width: 280)
-                HStack {
-                    Group {
-                        if isSecured {
-                            SecureField("统一身份认证密码", text: $viewModel.password)
-                        } else {
-                            TextField("统一身份认证密码", text: $viewModel.password)
-                        }
-                    }
-                    .textFieldStyle(.roundedBorder)
-                    Button {
-                        isSecured.toggle()
-                    } label: {
-                        Image(systemName: isSecured ? "eye" : "eye.slash")
-                    }
-                    .buttonStyle(.borderless)
-                }
-                .frame(width: 280)
-            }
-
-            if let error = viewModel.loginError {
-                Text(error)
-                    .font(.caption)
-                    .foregroundStyle(.red)
-            }
-
+                .multilineTextAlignment(.center)
+                .frame(maxWidth: 380)
             Button {
-                Task { await viewModel.login() }
+                openSettings()
             } label: {
-                if viewModel.isLoggingIn {
-                    ProgressView()
-                        .controlSize(.small)
-                } else {
-                    Text("登录")
-                }
+                Label("打开设置…", systemImage: "gearshape")
             }
             .buttonStyle(.borderedProminent)
-            .disabled(viewModel.isLoggingIn
-                || viewModel.username.isEmpty
-                || viewModel.password.isEmpty)
         }
         .padding(40)
         .frame(maxWidth: .infinity, maxHeight: .infinity)
+    }
+
+    private func openSettings() {
+        NSApp.sendAction(Selector(("showSettingsWindow:")), to: nil, from: nil)
     }
 }

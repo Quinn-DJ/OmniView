@@ -39,5 +39,12 @@ struct OmniViewApp: App {
                 .keyboardShortcut("r", modifiers: [.command, .shift])
             }
         }
+
+        // 设置窗口：菜单栏「OmniView → 设置…」(⌘,)
+        Settings {
+            SettingsView()
+                .environmentObject(zju)
+                .environmentObject(deepSeek)
+        }
     }
 }
