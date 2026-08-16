@@ -18,7 +18,7 @@ settings:
     GCC_TREAT_WARNINGS_AS_ERRORS: "NO"
     SWIFT_TREAT_WARNINGS_AS_ERRORS: "NO"
     CURRENT_PROJECT_VERSION: "1"
-    MARKETING_VERSION: "0.2.1"
+    MARKETING_VERSION: "0.2.2"
 targets:
   OmniView:
     type: application

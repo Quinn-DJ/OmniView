@@ -14,7 +14,7 @@ SIGN_IDENTITY=${SIGN_IDENTITY:--}
 SIGN_STYLE=${SIGN_STYLE:-Manual}
 SIGN_TEAM=${SIGN_TEAM:-}
 
-VERSION=$(/usr/libexec/PlistBuddy -c "Print :CFBundleShortVersionString" OmniView/Info.plist 2>/dev/null || echo "0.2.1")
+VERSION=$(/usr/libexec/PlistBuddy -c "Print :CFBundleShortVersionString" OmniView/Info.plist 2>/dev/null || echo "0.2.2")
 # Info.plist 中是 $(MARKETING_VERSION)，解析不到时用 project.yml 中的版本
 if [[ "$VERSION" == *'$('* ]]; then
     VERSION=$(grep -E 'MARKETING_VERSION' project.yml | head -1 | sed -E 's/.*: *"([^"]+)".*/\1/')
