@@ -3,14 +3,21 @@ import SwiftUI
 
 /// 应用代理：菜单栏应用的生命周期管理
 /// - 启动系统监控采样与各数据源的加载（原 WindowGroup 的 `.task` 等价逻辑）
+@MainActor
 final class AppDelegate: NSObject, NSApplicationDelegate {
-    /// 视图模型由 `OmniViewApp.body` 注入（body 在 didFinishLaunching 之前求值）
-    var systemMonitor: SystemMonitorViewModel?
-    var calendar: CalendarViewModel?
-    var zju: ZJUViewModel?
-    var deepSeek: DeepSeekViewModel?
+    /// 应用生命周期内持有的视图模型，供各 Scene 共享
+    let systemMonitor = SystemMonitorViewModel()
+    let calendar = CalendarViewModel()
+    let zju = ZJUViewModel()
+    let deepSeek = DeepSeekViewModel()
 
     func applicationDidFinishLaunching(_ notification: Notification) {
+        MainWindowManager.shared.configure(
+            systemMonitor: systemMonitor,
+            calendar: calendar,
+            zju: zju,
+            deepSeek: deepSeek
+        )
         if ScreenshotRenderer.runIfRequested() { return }
         startServices()
 
@@ -32,9 +39,9 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     private func startServices() {
         // 主线程：立即启动采样与硬件信息读取，保证菜单栏状态项快速出现
         Task { @MainActor in
-            systemMonitor?.start()
-            systemMonitor?.refreshHardware()
-            await calendar?.requestAccessIfNeeded()
+            systemMonitor.start()
+            systemMonitor.refreshHardware()
+            await calendar.requestAccessIfNeeded()
         }
 
         // 调试：`-skipAccountServices` 跳过账号服务（UI 测试用，避免钥匙串授权弹窗）
@@ -44,10 +51,10 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         // 若在主线程执行会阻塞整个菜单栏 UI（状态项无法出现）。
         let zju = zju
         Task.detached(priority: .userInitiated) {
-            await zju?.checkLoginState()
-            if zju?.hasSavedAccount == true {
-                await zju?.loginWithSavedAccount()
-                await zju?.refreshHomework()
+            await zju.checkLoginState()
+            if zju.hasSavedAccount {
+                await zju.loginWithSavedAccount()
+                await zju.refreshHomework()
             }
         }
     }
