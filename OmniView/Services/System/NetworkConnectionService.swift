@@ -42,33 +42,108 @@ enum NetworkConnectionService {
     // MARK: - 解析
 
     private static func read() -> NetworkConnection {
-        guard let interfaceName = primaryInterfaceName() else { return .disconnected }
-        let interface = interfaceInfo()[interfaceName]
-        let type = interface?.type
-        let displayName = interface?.displayName
+        let interfaces = interfaceInfo()
+        let primary = primaryInterfaceName()
 
-        if type == (kSCNetworkInterfaceTypeIEEE80211 as String) {
+        // 常规情况：默认路由出口就是 Wi-Fi / 有线接口
+        if let primary, let info = interfaces[primary], kind(for: info.type) != .other {
+            return makeConnection(interfaceName: primary, type: info.type, displayName: info.displayName)
+        }
+
+        // 默认路由被隧道（VPN / 代理软件，如 utunN）接管时，出口接口不是物理接口，
+        // 直接显示会退化成「其他网络」。这里回退到服务顺序里第一个已连接的物理接口，
+        // 保证用户仍能看到自己连的是哪个 Wi-Fi / 有线网络。
+        if let physical = firstConnectedPhysicalInterface(interfaces: interfaces) {
+            return makeConnection(
+                interfaceName: physical.name, type: physical.type, displayName: physical.displayName
+            )
+        }
+
+        guard let primary else { return .disconnected }
+        return NetworkConnection(
+            kind: .other,
+            interfaceName: primary,
+            networkName: nil,
+            interfaceDisplayName: interfaces[primary]?.displayName
+        )
+    }
+
+    private static func kind(for type: String?) -> NetworkConnection.Kind {
+        guard let type else { return .other }
+        if type == (kSCNetworkInterfaceTypeIEEE80211 as String) { return .wifi }
+        if type == (kSCNetworkInterfaceTypeEthernet as String) { return .wired }
+        return .other
+    }
+
+    private static func makeConnection(
+        interfaceName: String,
+        type: String?,
+        displayName: String?
+    ) -> NetworkConnection {
+        switch kind(for: type) {
+        case .wifi:
             return NetworkConnection(
                 kind: .wifi,
                 interfaceName: interfaceName,
                 networkName: wifiSSID(interfaceName: interfaceName),
                 interfaceDisplayName: displayName
             )
-        }
-        if type == (kSCNetworkInterfaceTypeEthernet as String) {
+        case .wired:
             return NetworkConnection(
                 kind: .wired,
                 interfaceName: interfaceName,
                 networkName: nil,
                 interfaceDisplayName: displayName
             )
+        case .other, .disconnected:
+            return NetworkConnection(
+                kind: .other,
+                interfaceName: interfaceName,
+                networkName: nil,
+                interfaceDisplayName: displayName
+            )
         }
-        return NetworkConnection(
-            kind: .other,
-            interfaceName: interfaceName,
-            networkName: nil,
-            interfaceDisplayName: displayName
-        )
+    }
+
+    /// 服务顺序里第一个「已启用且有 IPv4 地址」的物理接口
+    private static func firstConnectedPhysicalInterface(
+        interfaces: [String: (type: String?, displayName: String?)]
+    ) -> (name: String, type: String?, displayName: String?)? {
+        guard
+            let preferences = SCPreferencesCreate(
+                nil, "OmniViewNetworkConnection" as CFString, nil
+            ),
+            let services = SCNetworkServiceCopyAll(preferences) as? [SCNetworkService],
+            let store = SCDynamicStoreCreate(
+                nil, "OmniViewNetworkConnection" as CFString, nil, nil
+            )
+        else {
+            return nil
+        }
+
+        for service in services {
+            guard SCNetworkServiceGetEnabled(service),
+                  let interface = SCNetworkServiceGetInterface(service),
+                  let bsdName = SCNetworkInterfaceGetBSDName(interface) as String?
+            else {
+                continue
+            }
+            let type = SCNetworkInterfaceGetInterfaceType(interface) as String?
+            guard kind(for: type) != .other else { continue }
+            guard let serviceID = SCNetworkServiceGetServiceID(service) as String?,
+                  let state = SCDynamicStoreCopyValue(
+                      store, "State:/Network/Service/\(serviceID)/IPv4" as CFString
+                  ) as? [String: Any],
+                  let addresses = state["Addresses"] as? [String],
+                  !addresses.isEmpty
+            else {
+                continue
+            }
+            let displayName = SCNetworkInterfaceGetLocalizedDisplayName(interface) as String?
+                ?? interfaces[bsdName]?.displayName
+            return (bsdName, type, displayName)
+        }
+        return nil
     }
 
     /// 默认路由出口接口（如 en0）；无默认路由时返回 nil

@@ -43,4 +43,15 @@ final class NetworkConnectionTests: XCTestCase {
     func testDisconnectedLabel() {
         XCTAssertEqual(NetworkConnection.disconnected.label, "未连接")
     }
+
+    /// 类型未知（如隧道接口）时退化为接口名，而不是笼统的「其他网络」
+    func testOtherNetworkUsesInterfaceNameWhenDisplayNameMissing() {
+        let connection = NetworkConnection(
+            kind: .other,
+            interfaceName: "utun8",
+            networkName: nil,
+            interfaceDisplayName: nil
+        )
+        XCTAssertEqual(connection.label, "utun8")
+    }
 }

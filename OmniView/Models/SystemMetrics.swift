@@ -64,7 +64,7 @@ struct NetworkConnection: Equatable {
         case .wired:
             return "有线连接"
         case .other:
-            return interfaceDisplayName ?? "其他网络"
+            return interfaceDisplayName ?? interfaceName ?? "其他网络"
         case .disconnected:
             return "未连接"
         }
