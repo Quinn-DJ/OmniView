@@ -10,6 +10,10 @@ struct StatusMetricCard: View {
     let detail: String
     var detailLines: [String] = []
     let indicatorColor: Color
+    /// 标题右侧的胶囊标注（如 Wi-Fi 名称 / 有线连接）
+    var badge: String? = nil
+    var badgeSystemImage: String? = nil
+    var helpText: String? = nil
 
     var body: some View {
         HStack(spacing: 12) {
@@ -19,9 +23,14 @@ struct StatusMetricCard: View {
                 .frame(width: 26, height: 26)
 
             VStack(alignment: .leading, spacing: 3) {
-                Text(title)
-                    .font(.caption)
-                    .foregroundStyle(.secondary)
+                HStack(spacing: 6) {
+                    Text(title)
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                    if let badge {
+                        badgeView(badge)
+                    }
+                }
                 Text(value)
                     .font(.title3.weight(.semibold))
                     .monospacedDigit()
@@ -48,6 +57,25 @@ struct StatusMetricCard: View {
         .padding(14)
         .background(Color(nsColor: .controlBackgroundColor))
         .clipShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
+    }
+
+    /// 连接类型胶囊：Wi-Fi 名称 / 有线连接
+    private func badgeView(_ text: String) -> some View {
+        HStack(spacing: 3) {
+            if let badgeSystemImage {
+                Image(systemName: badgeSystemImage)
+                    .font(.system(size: 8, weight: .semibold))
+            }
+            Text(text)
+                .font(.system(size: 10, weight: .medium))
+                .lineLimit(1)
+                .truncationMode(.middle)
+        }
+        .foregroundStyle(.secondary)
+        .padding(.horizontal, 6)
+        .padding(.vertical, 2)
+        .background(Capsule().fill(Color.primary.opacity(0.08)))
+        .help(helpText ?? text)
     }
 }
 

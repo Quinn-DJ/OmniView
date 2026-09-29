@@ -21,6 +21,10 @@ final class MainWindowManager {
 
     private init() {}
 
+    var isVisible: Bool {
+        window?.isVisible ?? false
+    }
+
     /// 由 `OmniViewApp.body` 注入视图模型（body 在应用启动时求值）
     func configure(
         systemMonitor: SystemMonitorViewModel,
@@ -68,7 +72,7 @@ final class MainWindowManager {
             queue: .main
         ) { _ in
             Task { @MainActor in
-                NSApp.setActivationPolicy(.accessory)
+                AppActivation.restoreAccessoryIfNoWindows()
             }
         }
 
@@ -80,7 +84,6 @@ final class MainWindowManager {
 
     /// LSUIElement 应用需要临时切回普通激活策略，窗口才能显示在其他应用之上
     private func activateApp() {
-        NSApp.setActivationPolicy(.regular)
-        NSApp.activate(ignoringOtherApps: true)
+        AppActivation.activate()
     }
 }

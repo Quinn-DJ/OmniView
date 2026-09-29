@@ -30,7 +30,7 @@ macOS 菜单栏仪表盘：实时系统监控、ZJU 学习助手（日历 / 作�
 
   字号可在 `OmniView/Views/MenuBar/MenuBarViews.swift` 的 `MenuBarLabel.fontSize` 中调整。
 
-- **弹出面板**：点击状态项显示 CPU / 内存 / 网络三张指标卡片，以及「打开完整界面」入口。
+- **弹出面板**：点击状态项显示 CPU / 内存 / 网络三张指标卡片，网络卡片会标注当前连接（Wi-Fi 名称 / 有线连接），底部提供「打开完整界面」「设置…」「退出」入口。
 - **完整界面**：学习 / 系统监控 / AI 监控三个页签组成的 Dashboard。
 
 ### 学习
@@ -44,7 +44,7 @@ macOS 菜单栏仪表盘：实时系统监控、ZJU 学习助手（日历 / 作�
 参考 [mac-scope](https://github.com/shenmuoso/mac-scope)。
 
 - **负载**：CPU 使用率（环形仪表 + 最近 15 分钟曲线）、内存占用、功耗（W）、温度（SoC / 电池 / 存储）、风扇转速（AppleSMC）。
-- **活动**：网络上下行速率与总量、磁盘读写速率与容量、电池电量 / 循环次数 / 健康度。
+- **活动**：网络上下行速率与总量（标注当前 Wi-Fi 名称或「有线连接」）、磁盘读写速率与容量、电池电量 / 循环次数 / 健康度。
 - **系统信息**：机型、芯片、内存、显卡、macOS 版本、序列号、启动磁盘、存储等。
 
 ### AI 监控（DeepSeek）
@@ -67,7 +67,7 @@ macOS 菜单栏仪表盘：实时系统监控、ZJU 学习助手（日历 / 作�
 ### 首次使用
 
 1. 首次启动时授予「日历」访问权限（仅本机读取，不上传）。
-2. 打开菜单栏 OmniView → 设置…（或按 `⌘,`）。
+2. 打开设置：点击菜单栏图标 → 面板底部齿轮按钮，或在主窗口按 `⌘,` / 应用菜单「OmniView → 设置…」。
 3. 在「教务网」页输入学号与密码登录学在浙大。
 4. 在「DeepSeek」页粘贴 API Key 并保存。
 
@@ -108,8 +108,8 @@ ARCH=x86_64 ./scripts/build_dmg.sh                    # 指定其他架构（默
 2. **推送版本标签**：
 
 ```bash
-git tag v0.2.2
-git push origin v0.2.2
+git tag v0.2.3
+git push origin v0.2.3
 ```
 
 两种方式都会构建 arm64 DMG，并发布带 `OmniView-<版本>-arm64.dmg` 产物与自动生成 release notes 的 GitHub Release。
@@ -139,11 +139,12 @@ xcodebuild -project OmniView.xcodeproj -scheme OmniView -configuration Debug \
 - **菜单栏应用**：`LSUIElement` 为 true，无 Dock 图标；关闭主窗口不会退出，可随时从菜单栏重新打开。
 - **调试参数**：
   - `-debugShowWindow`：启动 3 秒后自动打开主窗口
+  - `-debugShowSettings`：启动 3 秒后自动打开设置窗口
   - `-initialSection <key>`：指定主窗口初始页面（calendar / homework / courseware / dashboard / systemInfo / deepSeek）
   - `-skipAccountServices`：跳过账号服务（UI 测试用，避免钥匙串授权弹窗）
   - `-renderScreenshots <输出目录>`：渲染主要界面为 PNG 后退出（用于生成 README 截图）
 - **隐私**：日历数据仅在本机读取，不上传；教务网凭据与 DeepSeek API Key 均保存在钥匙串中。
-- **权限**：除日历外，应用还可能请求蓝牙 / 本地网络访问权限，用于系统信息中的蓝牙状态与网络流量展示。
+- **权限**：除日历外，应用还可能请求蓝牙 / 本地网络 / 定位权限，用于系统信息中的蓝牙状态、网络流量展示与 Wi-Fi 名称标注。macOS 14 起 Wi-Fi 名称（SSID）由系统按定位授权放行；未授权时卡片会退化为「Wi-Fi」并在悬停提示中说明。
 
 ## 参考项目
 

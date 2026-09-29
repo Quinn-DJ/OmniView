@@ -51,6 +51,7 @@ final class SystemSampler {
             downloadTotal: networkCounters.read,
             uploadTotal: networkCounters.written
         )
+        let connection = NetworkConnectionService.current()
         let cooling = smcReader.readCoolingUsage()
         let power = PowerMetricsReader.read()
 
@@ -65,6 +66,7 @@ final class SystemSampler {
             memory: memory,
             disk: disk,
             network: network,
+            connection: connection,
             power: power,
             temperature: TemperatureReader.read(),
             cooling: cooling,

@@ -322,7 +322,6 @@ struct UploadRow: View {
 // MARK: - 未登录提示（引导前往「设置」）
 
 struct ZJULoginView: View {
-    @Environment(\.openSettings) private var openSettings
     let title: String
     let subtitle: String
 
@@ -339,7 +338,7 @@ struct ZJULoginView: View {
                 .multilineTextAlignment(.center)
                 .frame(maxWidth: 380)
             Button {
-                openSettings()
+                SettingsWindowManager.shared.show()
             } label: {
                 Label("打开设置…", systemImage: "gearshape")
             }

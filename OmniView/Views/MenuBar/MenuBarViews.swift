@@ -118,7 +118,6 @@ struct MenuBarLabel: View {
 /// 不会自动随外部点击关闭，需手动监听失焦通知）。
 struct MenuBarPanelView: View {
     @EnvironmentObject private var viewModel: SystemMonitorViewModel
-    @Environment(\.openSettings) private var openSettings
     @Environment(\.dismiss) private var dismiss
 
     var body: some View {
@@ -195,7 +194,10 @@ struct MenuBarPanelView: View {
             systemImage: "network",
             value: "↓ \(Format.rate(snapshot.network.downloadRate))",
             detail: "↑ \(Format.rate(snapshot.network.uploadRate)) · 累计 ↓\(Format.bytes(snapshot.network.downloadTotal)) ↑\(Format.bytes(snapshot.network.uploadTotal))",
-            indicatorColor: .blue
+            indicatorColor: .blue,
+            badge: snapshot.connection.label,
+            badgeSystemImage: snapshot.connection.symbolName,
+            helpText: snapshot.connection.helpText
         )
     }
 
@@ -213,6 +215,14 @@ struct MenuBarPanelView: View {
             .keyboardShortcut(.defaultAction)
 
             Spacer()
+
+            Button {
+                dismiss()
+                SettingsWindowManager.shared.show()
+            } label: {
+                Image(systemName: "gearshape")
+            }
+            .help("设置…")
 
             Button(role: .destructive) {
                 NSApp.terminate(nil)

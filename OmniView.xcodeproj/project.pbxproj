@@ -11,11 +11,15 @@
 		217632C38DFE52D0F72913F2 /* DeepSeekDashboardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD20B958F1F9473CE4CDE1B0 /* DeepSeekDashboardView.swift */; };
 		23339E9AF81FF33DDD487C4B /* PowerMetricsReader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D0759ABDFFCDC0C2BB27B52 /* PowerMetricsReader.swift */; };
 		359C275253C30B25CECED9FB /* TemperatureReader.swift in Sources */ = {isa = PBXBuildFile; fileRef = D3858F6EB12559DF3E293138 /* TemperatureReader.swift */; };
+		451C169AF159A39446CF1D70 /* NetworkConnectionTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D8258610E7D79A415B06327 /* NetworkConnectionTests.swift */; };
 		50AF5F97F90D914DC2CF3C4F /* BigUInt.swift in Sources */ = {isa = PBXBuildFile; fileRef = D4C3F252161C9CEC430B6F6C /* BigUInt.swift */; };
 		50C4BF74C5BE9936D74EB1E7 /* ZJUViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = DAAA0F06ED9B4590E0F196B0 /* ZJUViewModel.swift */; };
+		52D9C864B0BC2C3B934C17D7 /* NetworkConnectionService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1D42F0DD33EC6AFA74317952 /* NetworkConnectionService.swift */; };
 		5B4E63497F4A1EA82CDBEDE0 /* ZJUService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 72AA3176392D8ADD1B13EEF3 /* ZJUService.swift */; };
 		5E554513D8CC7D5ED554476B /* MenuBarViews.swift in Sources */ = {isa = PBXBuildFile; fileRef = 350A18ED3D2BF14C76F4827B /* MenuBarViews.swift */; };
 		635D23A9A0513E6243492BB6 /* SMCReader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 103EA558C0EC851B42C2FCFD /* SMCReader.swift */; };
+		693839F83C55DC66FE8A850B /* AppActivation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5A2F20D65735CF1F72610C98 /* AppActivation.swift */; };
+		6B06853185A0CA5442231941 /* SettingsWindowManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = AC0B847BE03320A8B3225969 /* SettingsWindowManager.swift */; };
 		70487B70C33BB337E818F119 /* BatteryInfoService.swift in Sources */ = {isa = PBXBuildFile; fileRef = C61A542A758AD00B2EEF2C3C /* BatteryInfoService.swift */; };
 		7099BCBFE4DCD2E1D99CF433 /* CalendarViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7103F80D295CEF9CC3F5FB77 /* CalendarViewModel.swift */; };
 		719B6D744BB09676B517D995 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60D266445B546166F7297B73 /* ContentView.swift */; };
@@ -28,6 +32,7 @@
 		A5540130D55AB9F44D5041FB /* OmniViewApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 35110F0BB02F9520DEB3F8C6 /* OmniViewApp.swift */; };
 		A5D941A3A36F674655A6CC2A /* ChartCards.swift in Sources */ = {isa = PBXBuildFile; fileRef = 30E403D92047A0CF936FCD66 /* ChartCards.swift */; };
 		AD07BFE97B558B6478E14681 /* SystemSampler.swift in Sources */ = {isa = PBXBuildFile; fileRef = F88D49EBAD485B9C46A3A95E /* SystemSampler.swift */; };
+		AD6038AF808F99AF9E8F1B59 /* LocationAuthorizationService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7554ED15AB53494DD0E7870D /* LocationAuthorizationService.swift */; };
 		B1F39246B07AC518F4F4A51E /* DeepSeekService.swift in Sources */ = {isa = PBXBuildFile; fileRef = AC9C4429617B354C8D4B7A47 /* DeepSeekService.swift */; };
 		B6F02EB00D08B3A306D99EA3 /* DeepSeekViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2A8DFBD83D63F5F3FBDF865C /* DeepSeekViewModel.swift */; };
 		BAF6DC7BC173860D1B738A38 /* HomeworkCoursewareViews.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D3EAF776973C6A2C68AC7AB /* HomeworkCoursewareViews.swift */; };
@@ -64,6 +69,7 @@
 		0A5FCF0FF525E91B0ADB99D6 /* OmniView.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = OmniView.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		103EA558C0EC851B42C2FCFD /* SMCReader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SMCReader.swift; sourceTree = "<group>"; };
 		1C7FEB5ED493D7A7AD0D412F /* RawRSATests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RawRSATests.swift; sourceTree = "<group>"; };
+		1D42F0DD33EC6AFA74317952 /* NetworkConnectionService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkConnectionService.swift; sourceTree = "<group>"; };
 		293B1FA1B25892241FBABC8D /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		2A8DFBD83D63F5F3FBDF865C /* DeepSeekViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeepSeekViewModel.swift; sourceTree = "<group>"; };
 		30E403D92047A0CF936FCD66 /* ChartCards.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChartCards.swift; sourceTree = "<group>"; };
@@ -73,12 +79,15 @@
 		37590ADB9A2A32B760BFE451 /* OmniViewTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = OmniViewTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		3AEE73713828C55A2E8891FF /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		558A3954FF919E7089A45532 /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
+		5A2F20D65735CF1F72610C98 /* AppActivation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppActivation.swift; sourceTree = "<group>"; };
 		5B3E740C3E1544DDC855AA51 /* SystemMonitorViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SystemMonitorViewModel.swift; sourceTree = "<group>"; };
+		5D8258610E7D79A415B06327 /* NetworkConnectionTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkConnectionTests.swift; sourceTree = "<group>"; };
 		60D266445B546166F7297B73 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
 		6AB7FA7B3CF6C69ADBD0E057 /* FormatTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FormatTests.swift; sourceTree = "<group>"; };
 		6D3EAF776973C6A2C68AC7AB /* HomeworkCoursewareViews.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeworkCoursewareViews.swift; sourceTree = "<group>"; };
 		7103F80D295CEF9CC3F5FB77 /* CalendarViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalendarViewModel.swift; sourceTree = "<group>"; };
 		72AA3176392D8ADD1B13EEF3 /* ZJUService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZJUService.swift; sourceTree = "<group>"; };
+		7554ED15AB53494DD0E7870D /* LocationAuthorizationService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocationAuthorizationService.swift; sourceTree = "<group>"; };
 		787693AD80AC817694B7D574 /* SystemDashboardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SystemDashboardView.swift; sourceTree = "<group>"; };
 		7BA053E377660A58B3C32E45 /* HardwareInfoService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HardwareInfoService.swift; sourceTree = "<group>"; };
 		7DD184419DC4A83510F7730C /* SystemInfoView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SystemInfoView.swift; sourceTree = "<group>"; };
@@ -87,6 +96,7 @@
 		90B33C814CD92672A541F58D /* MenuBarUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MenuBarUITests.swift; sourceTree = "<group>"; };
 		9D0759ABDFFCDC0C2BB27B52 /* PowerMetricsReader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PowerMetricsReader.swift; sourceTree = "<group>"; };
 		A096E7EFDCCA848B3FBD1F84 /* SystemMetrics.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SystemMetrics.swift; sourceTree = "<group>"; };
+		AC0B847BE03320A8B3225969 /* SettingsWindowManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsWindowManager.swift; sourceTree = "<group>"; };
 		AC9C4429617B354C8D4B7A47 /* DeepSeekService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeepSeekService.swift; sourceTree = "<group>"; };
 		ACF0911B433D6DC3359B1EF8 /* MainWindowManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainWindowManager.swift; sourceTree = "<group>"; };
 		B720DD8057F7E5E87267AB8A /* DeepSeekModelTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeepSeekModelTests.swift; sourceTree = "<group>"; };
@@ -126,6 +136,8 @@
 			children = (
 				C61A542A758AD00B2EEF2C3C /* BatteryInfoService.swift */,
 				7BA053E377660A58B3C32E45 /* HardwareInfoService.swift */,
+				7554ED15AB53494DD0E7870D /* LocationAuthorizationService.swift */,
+				1D42F0DD33EC6AFA74317952 /* NetworkConnectionService.swift */,
 				9D0759ABDFFCDC0C2BB27B52 /* PowerMetricsReader.swift */,
 				103EA558C0EC851B42C2FCFD /* SMCReader.swift */,
 				F88D49EBAD485B9C46A3A95E /* SystemSampler.swift */,
@@ -215,6 +227,7 @@
 				F29AEA3C21EB06B211ADF57A /* BigUIntTests.swift */,
 				B720DD8057F7E5E87267AB8A /* DeepSeekModelTests.swift */,
 				6AB7FA7B3CF6C69ADBD0E057 /* FormatTests.swift */,
+				5D8258610E7D79A415B06327 /* NetworkConnectionTests.swift */,
 				1C7FEB5ED493D7A7AD0D412F /* RawRSATests.swift */,
 			);
 			path = OmniViewTests;
@@ -238,10 +251,12 @@
 		C3EEB4F653192C9DF446D353 /* App */ = {
 			isa = PBXGroup;
 			children = (
+				5A2F20D65735CF1F72610C98 /* AppActivation.swift */,
 				F399D0DB36A2B36C5990283B /* AppDelegate.swift */,
 				60D266445B546166F7297B73 /* ContentView.swift */,
 				ACF0911B433D6DC3359B1EF8 /* MainWindowManager.swift */,
 				35110F0BB02F9520DEB3F8C6 /* OmniViewApp.swift */,
+				AC0B847BE03320A8B3225969 /* SettingsWindowManager.swift */,
 			);
 			path = App;
 			sourceTree = "<group>";
@@ -397,6 +412,7 @@
 				FC75D125D0DDA91BB2AC179A /* BigUIntTests.swift in Sources */,
 				C1EC035190FAA261AE76F3CB /* DeepSeekModelTests.swift in Sources */,
 				8315CB52CA027AD30A9261E0 /* FormatTests.swift in Sources */,
+				451C169AF159A39446CF1D70 /* NetworkConnectionTests.swift in Sources */,
 				9C7FF9A400F0C21666ACA9EF /* RawRSATests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -405,6 +421,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				693839F83C55DC66FE8A850B /* AppActivation.swift in Sources */,
 				BB4DAE0E354F3BA266E5E51F /* AppDelegate.swift in Sources */,
 				70487B70C33BB337E818F119 /* BatteryInfoService.swift in Sources */,
 				50AF5F97F90D914DC2CF3C4F /* BigUInt.swift in Sources */,
@@ -419,12 +436,15 @@
 				F2FFCA0BBD689A43EDF6C78F /* HardwareInfoService.swift in Sources */,
 				BAF6DC7BC173860D1B738A38 /* HomeworkCoursewareViews.swift in Sources */,
 				7DCFBA911730EA5E6FB68AD9 /* KeychainStore.swift in Sources */,
+				AD6038AF808F99AF9E8F1B59 /* LocationAuthorizationService.swift in Sources */,
 				E96BFBEACA35AEDECF94F69D /* MainWindowManager.swift in Sources */,
 				5E554513D8CC7D5ED554476B /* MenuBarViews.swift in Sources */,
+				52D9C864B0BC2C3B934C17D7 /* NetworkConnectionService.swift in Sources */,
 				A5540130D55AB9F44D5041FB /* OmniViewApp.swift in Sources */,
 				23339E9AF81FF33DDD487C4B /* PowerMetricsReader.swift in Sources */,
 				635D23A9A0513E6243492BB6 /* SMCReader.swift in Sources */,
 				E241A8ECFDB3FB6F97C6C148 /* SettingsView.swift in Sources */,
+				6B06853185A0CA5442231941 /* SettingsWindowManager.swift in Sources */,
 				8182A28E498DFC49EE6897FE /* SystemDashboardView.swift in Sources */,
 				961E1554DA81A74F7313D81A /* SystemInfoView.swift in Sources */,
 				ECE42DD7C457D18E4B430651 /* SystemMetrics.swift in Sources */,
@@ -549,7 +569,7 @@
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				MACOSX_DEPLOYMENT_TARGET = 14.0;
-				MARKETING_VERSION = 0.2.2;
+				MARKETING_VERSION = 0.2.3;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -620,7 +640,7 @@
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				MACOSX_DEPLOYMENT_TARGET = 14.0;
-				MARKETING_VERSION = 0.2.2;
+				MARKETING_VERSION = 0.2.3;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
 				ONLY_ACTIVE_ARCH = YES;

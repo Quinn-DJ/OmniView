@@ -4,7 +4,6 @@ import SwiftUI
 /// DeepSeek 监控看板
 struct DeepSeekDashboardView: View {
     @EnvironmentObject private var viewModel: DeepSeekViewModel
-    @Environment(\.openSettings) private var openSettings
     @State private var selectedTokenDate: Date?
 
     var body: some View {
@@ -51,7 +50,7 @@ struct DeepSeekDashboardView: View {
                 .multilineTextAlignment(.center)
                 .frame(maxWidth: 420)
             Button {
-                openSettings()
+                SettingsWindowManager.shared.show()
             } label: {
                 Label("打开设置…", systemImage: "gearshape")
             }

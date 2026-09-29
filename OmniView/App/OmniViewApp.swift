@@ -14,14 +14,15 @@ struct OmniViewApp: App {
                 .environmentObject(appDelegate.systemMonitor)
         }
         .menuBarExtraStyle(.window)
-
-        // 设置窗口：菜单栏「OmniView → 设置…」(⌘,)
-        Settings {
-            SettingsView()
-                .environmentObject(appDelegate.zju)
-                .environmentObject(appDelegate.deepSeek)
-        }
         .commands {
+            // 设置窗口：菜单栏「OmniView → 设置…」(⌘,)
+            // 不用 SwiftUI `Settings` 场景：菜单栏应用里它无法从弹出面板打开（见 SettingsWindowManager）
+            CommandGroup(after: .appInfo) {
+                Button("设置…") {
+                    SettingsWindowManager.shared.show()
+                }
+                .keyboardShortcut(",", modifiers: .command)
+            }
             CommandGroup(after: .newItem) {
                 Button("刷新全部数据") {
                     Task {

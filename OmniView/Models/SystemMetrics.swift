@@ -36,6 +36,67 @@ struct NetworkUsage {
     let uploadTotal: UInt64
 }
 
+/// 当前主用网络连接（默认路由出口）的展示信息
+struct NetworkConnection: Equatable {
+    enum Kind: Equatable {
+        case wifi
+        case wired
+        case other
+        case disconnected
+    }
+
+    let kind: Kind
+    let interfaceName: String?
+    /// Wi-Fi 名称（SSID）；未授予定位权限或未连接时为 nil
+    let networkName: String?
+    /// 系统本地化接口名，如「Wi-Fi」「USB 10/100/1000 LAN」
+    let interfaceDisplayName: String?
+
+    static let disconnected = NetworkConnection(
+        kind: .disconnected, interfaceName: nil, networkName: nil, interfaceDisplayName: nil
+    )
+
+    /// 卡片上显示的标注：Wi-Fi 名称 / 有线连接 / 接口名
+    var label: String {
+        switch kind {
+        case .wifi:
+            return networkName ?? interfaceDisplayName ?? "Wi-Fi"
+        case .wired:
+            return "有线连接"
+        case .other:
+            return interfaceDisplayName ?? "其他网络"
+        case .disconnected:
+            return "未连接"
+        }
+    }
+
+    var symbolName: String {
+        kind == .wired ? "cable.connector" : "wifi"
+    }
+
+    /// 悬停提示：接口、名称与权限说明
+    var helpText: String {
+        switch kind {
+        case .wifi:
+            var text = "Wi-Fi"
+            if let interfaceName { text += "（\(interfaceName)）" }
+            if let networkName {
+                return "\(text)：\(networkName)"
+            }
+            return "\(text)：未取到网络名称，请在「系统设置 → 隐私与安全性 → 定位服务」中允许 OmniView 访问"
+        case .wired:
+            guard let interfaceName else { return "有线连接" }
+            let name = interfaceDisplayName.map { "\($0) · \(interfaceName)" } ?? interfaceName
+            return "有线连接：\(name)"
+        case .other:
+            guard let interfaceName else { return "其他网络" }
+            return "\(interfaceDisplayName ?? "网络")（\(interfaceName)）"
+        case .disconnected:
+            return "当前无默认网络连接"
+        }
+    }
+}
+
 struct PowerUsage {
     let timestamp: Date = .now
     let systemWatts: Double?
@@ -112,6 +173,7 @@ struct SystemSnapshot {
     let memory: MemoryUsage
     let disk: DiskUsage
     let network: NetworkUsage
+    let connection: NetworkConnection
     let power: PowerUsage
     let temperature: TemperatureUsage
     let cooling: CoolingUsage

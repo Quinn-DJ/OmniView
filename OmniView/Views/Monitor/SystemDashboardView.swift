@@ -90,7 +90,10 @@ struct SystemDashboardView: View {
                 systemImage: "network",
                 value: "↓ \(Format.rate(snapshot.network.downloadRate))",
                 detail: "↑ \(Format.rate(snapshot.network.uploadRate))",
-                indicatorColor: .blue
+                indicatorColor: .blue,
+                badge: snapshot.connection.label,
+                badgeSystemImage: snapshot.connection.symbolName,
+                helpText: snapshot.connection.helpText
             )
         }
     }
@@ -191,7 +194,7 @@ struct SystemDashboardView: View {
     // MARK: - 网络面板
 
     private func networkPanel(_ snapshot: SystemSnapshot) -> some View {
-        InfoPanel(title: "网络活动", subtitle: "最近 60 秒") {
+        InfoPanel(title: "网络活动", subtitle: "\(snapshot.connection.label) · 最近 60 秒") {
             VStack(alignment: .leading, spacing: 8) {
                 ChartLegendRow(
                     title: "下载",

@@ -27,11 +27,24 @@ final class SystemMonitorViewModel: ObservableObject {
         guard !isSampling else { return }
         isSampling = true
         sampleNow()
+        requestWiFiNamePermissionIfNeeded()
         let timer = Timer(timeInterval: sampleInterval, repeats: true) { [weak self] _ in
             self?.sampleNow()
         }
         RunLoop.main.add(timer, forMode: .common)
         self.timer = timer
+    }
+
+    /// Wi-Fi 名称（SSID）在 macOS 14+ 由系统按「定位服务」授权放行：
+    /// 只有系统确实没有给出名称（`networkName == nil`）时才请求一次授权，已拒绝则不再打扰。
+    private func requestWiFiNamePermissionIfNeeded() {
+        guard let connection = snapshot?.connection,
+              connection.kind == .wifi,
+              connection.networkName == nil
+        else {
+            return
+        }
+        LocationAuthorizationService.shared.requestIfNeeded()
     }
 
     func stop() {

@@ -18,7 +18,9 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
             zju: zju,
             deepSeek: deepSeek
         )
+        SettingsWindowManager.shared.configure(zju: zju, deepSeek: deepSeek)
         if ScreenshotRenderer.runIfRequested() { return }
+
         startServices()
 
         // 调试：`-debugShowWindow` 启动 3 秒后自动打开主窗口（验证窗口创建路径）
@@ -29,6 +31,13 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
             }
         }
 
+        // 调试：`-debugShowSettings` 启动 3 秒后自动打开设置窗口（验证窗口创建路径）
+        if ProcessInfo.processInfo.arguments.contains("-debugShowSettings") {
+            Task { @MainActor in
+                try? await Task.sleep(for: .seconds(3))
+                SettingsWindowManager.shared.show()
+            }
+        }
     }
 
     /// 应用关闭最后一个窗口后不退出（菜单栏应用常驻）
