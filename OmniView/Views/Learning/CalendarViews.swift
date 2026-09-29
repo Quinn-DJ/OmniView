@@ -19,6 +19,13 @@ struct CalendarView: View {
         return formatter
     }()
 
+    private static let dayTitleFormatter: DateFormatter = {
+        let formatter = DateFormatter()
+        formatter.locale = Locale(identifier: "zh_CN")
+        formatter.dateFormat = "M月d日 EEEE"
+        return formatter
+    }()
+
     var body: some View {
         VStack(spacing: 0) {
             header
@@ -45,6 +52,8 @@ struct CalendarView: View {
         }
     }
 
+    // MARK: 顶部工具栏
+
     private var header: some View {
         HStack(spacing: 12) {
             Picker("", selection: $viewModel.mode) {
@@ -53,32 +62,15 @@ struct CalendarView: View {
                 }
             }
             .pickerStyle(.segmented)
-            .frame(width: 180)
+            .labelsHidden()
+            .frame(width: 150)
 
-            Button {
-                viewModel.move(by: viewModel.mode == .month ? .month : .day, value: -1)
-            } label: {
-                Image(systemName: "chevron.left")
-            }
-            .buttonStyle(.borderless)
-
-            Button("今天") {
-                viewModel.goToToday()
-            }
-            .buttonStyle(.borderless)
-
-            Button {
-                viewModel.move(by: viewModel.mode == .month ? .month : .day, value: 1)
-            } label: {
-                Image(systemName: "chevron.right")
-            }
-            .buttonStyle(.borderless)
+            navigationCluster
 
             Text(title)
                 .font(.title3.weight(.semibold))
-                .frame(minWidth: 200, alignment: .leading)
-
-            Spacer()
+                .lineLimit(1)
+                .frame(maxWidth: .infinity, alignment: .leading)
 
             if viewModel.isLoading {
                 ProgressView()
@@ -87,6 +79,38 @@ struct CalendarView: View {
         }
         .padding(.horizontal, 16)
         .padding(.vertical, 10)
+    }
+
+    /// 「上一页 / 今天 / 下一页」控制簇：视觉上成组，与模式切换分离
+    private var navigationCluster: some View {
+        HStack(spacing: 0) {
+            navButton("chevron.left") {
+                viewModel.move(by: viewModel.mode == .month ? .month : .day, value: -1)
+            }
+            Button("今天") {
+                viewModel.goToToday()
+            }
+            .buttonStyle(.borderless)
+            .padding(.horizontal, 10)
+            navButton("chevron.right") {
+                viewModel.move(by: viewModel.mode == .month ? .month : .day, value: 1)
+            }
+        }
+        .padding(3)
+        .background(
+            RoundedRectangle(cornerRadius: 6)
+                .fill(Color.primary.opacity(0.05))
+        )
+    }
+
+    private func navButton(_ systemImage: String, action: @escaping () -> Void) -> some View {
+        Button(action: action) {
+            Image(systemName: systemImage)
+                .font(.system(size: 12, weight: .medium))
+                .frame(width: 26, height: 24)
+                .contentShape(Rectangle())
+        }
+        .buttonStyle(.borderless)
     }
 
     private var title: String {
@@ -98,7 +122,7 @@ struct CalendarView: View {
             guard let first = days.first, let last = days.last else { return "" }
             return "\(Self.weekRangeFormatter.string(from: first)) – \(Self.weekRangeFormatter.string(from: last))"
         case .day:
-            return Self.titleFormatter.string(from: viewModel.currentDate)
+            return Self.dayTitleFormatter.string(from: viewModel.currentDate)
         }
     }
 
@@ -149,15 +173,15 @@ struct EventChip: View {
         HStack(spacing: 4) {
             if event.isClassEvent {
                 Image(systemName: "graduationcap")
-                    .font(.system(size: 10))
+                    .font(.system(size: 10, weight: .semibold))
             }
             Text(event.title)
                 .font(.caption.weight(.medium))
                 .lineLimit(1)
             Spacer(minLength: 0)
         }
-        .padding(.horizontal, 6)
-        .padding(.vertical, 3)
+        .padding(.horizontal, 5)
+        .padding(.vertical, 2)
         .background(CalendarStyle.color(for: event).opacity(0.18))
         .foregroundStyle(CalendarStyle.color(for: event))
         .clipShape(RoundedRectangle(cornerRadius: 4))
@@ -165,6 +189,7 @@ struct EventChip: View {
             RoundedRectangle(cornerRadius: 4)
                 .stroke(CalendarStyle.color(for: event).opacity(0.5), lineWidth: 0.5)
         )
+        .help(event.isAllDay ? event.title : "\(event.title)（\(CalendarStyle.timeString(event.startDate)) – \(CalendarStyle.timeString(event.endDate))）")
     }
 }
 
@@ -174,22 +199,13 @@ struct DayView: View {
     let events: [CalendarEventItem]
     let date: Date
 
-    private static let dayTitleFormatter: DateFormatter = {
-        let formatter = DateFormatter()
-        formatter.locale = Locale(identifier: "zh_CN")
-        formatter.dateFormat = "M月d日 EEEE"
-        return formatter
-    }()
-
     var body: some View {
-        VStack(alignment: .leading, spacing: 0) {
-            Text(Self.dayTitleFormatter.string(from: date))
-                .font(.headline)
-                .padding(.horizontal, 16)
-                .padding(.vertical, 8)
-            TimelineGrid(events: events, columns: 1) { event in
-                EventChip(event: event)
-            }
+        TimelineGrid(
+            events: events,
+            columns: 1,
+            showsNowIndicator: Calendar.current.isDateInToday(date)
+        ) { event in
+            EventChip(event: event)
         }
     }
 }
@@ -214,36 +230,52 @@ struct WeekView: View {
         return formatter
     }()
 
+    private var todayIndex: Int? {
+        days.firstIndex { Calendar.current.isDateInToday($0) }
+    }
+
+    private var showsToday: Bool {
+        todayIndex != nil
+    }
+
     var body: some View {
         VStack(spacing: 0) {
             HStack(spacing: 0) {
                 Color.clear.frame(width: 44, height: 36)
                 ForEach(days, id: \.self) { day in
-                    VStack(spacing: 2) {
-                        Text(Self.weekdayFormatter.string(from: day))
-                            .font(.caption)
-                            .foregroundStyle(.secondary)
-                        Text(Self.dayFormatter.string(from: day))
-                            .font(.headline)
-                            .foregroundStyle(Calendar.current.isDateInToday(day) ? .white : .primary)
-                            .frame(width: 26, height: 26)
-                            .background(
-                                Calendar.current.isDateInToday(day)
-                                    ? AnyShapeStyle(Color.accentColor)
-                                    : AnyShapeStyle(.clear)
-                            )
-                            .clipShape(Circle())
-                    }
-                    .frame(maxWidth: .infinity)
+                    dayHeader(day)
+                        .frame(maxWidth: .infinity)
                 }
             }
             .padding(.horizontal, 8)
 
-            HStack(spacing: 0) {
-                TimelineGrid(events: days.flatMap { eventsByDay[$0] ?? [] }, columns: 7, columnStartDates: days) { event in
-                    EventChip(event: event)
-                }
+            TimelineGrid(
+                events: days.flatMap { eventsByDay[$0] ?? [] },
+                columns: 7,
+                columnStartDates: days,
+                highlightColumn: todayIndex,
+                showsNowIndicator: showsToday
+            ) { event in
+                EventChip(event: event)
             }
+        }
+    }
+
+    private func dayHeader(_ day: Date) -> some View {
+        let calendar = Calendar.current
+        let isToday = calendar.isDateInToday(day)
+        let isWeekend = calendar.isDateInWeekend(day)
+
+        return VStack(spacing: 2) {
+            Text(Self.weekdayFormatter.string(from: day))
+                .font(.caption)
+                .foregroundStyle(isWeekend ? AnyShapeStyle(.tertiary) : AnyShapeStyle(.secondary))
+            Text(Self.dayFormatter.string(from: day))
+                .font(.headline)
+                .foregroundStyle(isToday ? AnyShapeStyle(.white) : AnyShapeStyle(.primary))
+                .frame(width: 26, height: 26)
+                .background(isToday ? AnyShapeStyle(Color.accentColor) : AnyShapeStyle(.clear))
+                .clipShape(Circle())
         }
     }
 }
@@ -255,46 +287,98 @@ struct TimelineGrid<Content: View>: View {
     let events: [CalendarEventItem]
     let columns: Int
     var columnStartDates: [Date]? = nil
+    var highlightColumn: Int? = nil
+    var showsNowIndicator: Bool = false
     let content: (CalendarEventItem) -> Content
 
     private let dayStart = CalendarStyle.dayStartHour
     private let dayEnd = CalendarStyle.dayEndHour
     private let hourHeight = CalendarStyle.hourHeight
 
+    private var gridHeight: CGFloat {
+        CGFloat(dayEnd - dayStart) * hourHeight
+    }
+
     var body: some View {
         ScrollView {
-            GeometryReader { proxy in
-                let width = proxy.size.width
-                let columnWidth = (width - 44) / CGFloat(columns)
+            TimelineView(.everyMinute) { context in
+                GeometryReader { proxy in
+                    let width = proxy.size.width
+                    let columnWidth = (width - 44) / CGFloat(columns)
 
-                ZStack(alignment: .topLeading) {
-                    // 时间刻度与网格线
-                    VStack(alignment: .leading, spacing: 0) {
-                        ForEach(dayStart..<dayEnd, id: \.self) { hour in
-                            HStack(spacing: 0) {
-                                Text(String(format: "%02d:00", hour))
-                                    .font(.system(size: 9))
-                                    .foregroundStyle(.tertiary)
-                                    .frame(width: 36, alignment: .trailing)
-                                Rectangle()
-                                    .fill(Color.primary.opacity(0.06))
-                                    .frame(height: 0.5)
-                            }
-                            .frame(height: hourHeight)
+                    ZStack(alignment: .topLeading) {
+                        hourColumn
+                        if let highlightColumn {
+                            columnHighlight(index: highlightColumn, columnWidth: columnWidth)
+                        }
+                        eventLayer(columnWidth: columnWidth)
+                        if showsNowIndicator, let nowY = nowLineY(for: context.date) {
+                            nowIndicator(width: width, y: nowY)
                         }
                     }
-
-                    // 事件
-                    ForEach(events) { event in
-                        let position = eventPosition(event, columnWidth: columnWidth)
-                        content(event)
-                            .frame(width: position.width)
-                            .position(x: position.x, y: position.y)
-                    }
                 }
+                .frame(height: gridHeight)
             }
-            .frame(height: CGFloat(dayEnd - dayStart) * hourHeight)
         }
+    }
+
+    /// 时间刻度与网格线
+    private var hourColumn: some View {
+        VStack(alignment: .leading, spacing: 0) {
+            ForEach(dayStart..<dayEnd, id: \.self) { hour in
+                HStack(spacing: 0) {
+                    Text(String(format: "%02d:00", hour))
+                        .font(.system(size: 9))
+                        .foregroundStyle(.tertiary)
+                        .frame(width: 36, alignment: .trailing)
+                    Rectangle()
+                        .fill(Color.primary.opacity(0.06))
+                        .frame(height: 0.5)
+                }
+                .frame(height: hourHeight)
+            }
+        }
+    }
+
+    /// 高亮某一列（周视图中的今天）
+    private func columnHighlight(index: Int, columnWidth: CGFloat) -> some View {
+        RoundedRectangle(cornerRadius: 6)
+            .fill(Color.accentColor.opacity(0.05))
+            .frame(width: max(0, columnWidth - 2), height: gridHeight)
+            .position(x: 44 + CGFloat(index) * columnWidth + columnWidth / 2, y: gridHeight / 2)
+    }
+
+    /// 事件层
+    private func eventLayer(columnWidth: CGFloat) -> some View {
+        ForEach(events) { event in
+            let position = eventPosition(event, columnWidth: columnWidth)
+            content(event)
+                .frame(width: position.width)
+                .position(x: position.x, y: position.y)
+        }
+    }
+
+    /// 当前时间指示线（仅当天范围内的视图显示）
+    private func nowIndicator(width: CGFloat, y: CGFloat) -> some View {
+        Group {
+            Rectangle()
+                .fill(Color.red.opacity(0.85))
+                .frame(width: max(0, width - 44), height: 1)
+                .position(x: 44 + max(0, width - 44) / 2, y: y)
+            Circle()
+                .fill(Color.red)
+                .frame(width: 6, height: 6)
+                .position(x: 40, y: y)
+        }
+    }
+
+    /// 当前时间在网格中的 y 坐标（超出 6:00–24:00 则不显示）
+    private func nowLineY(for date: Date) -> CGFloat? {
+        let calendar = Calendar.current
+        let hour = CGFloat(calendar.component(.hour, from: date))
+            + CGFloat(calendar.component(.minute, from: date)) / 60
+        guard hour >= CGFloat(dayStart), hour <= CGFloat(dayEnd) else { return nil }
+        return (hour - CGFloat(dayStart)) * hourHeight
     }
 
     private func eventPosition(_ event: CalendarEventItem, columnWidth: CGFloat) -> (x: CGFloat, y: CGFloat, width: CGFloat) {
@@ -366,9 +450,13 @@ struct MonthView: View {
         return formatter
     }()
 
+    private static let cellSpacing: CGFloat = 3
+    private static let rows = 6
+    private static let columns = 7
+
     var body: some View {
         VStack(spacing: 0) {
-            HStack {
+            HStack(spacing: Self.cellSpacing) {
                 ForEach(Self.weekdayNames, id: \.self) { name in
                     Text(name)
                         .font(.caption)
@@ -376,23 +464,39 @@ struct MonthView: View {
                         .frame(maxWidth: .infinity)
                 }
             }
+            .padding(.horizontal, 8)
             .padding(.vertical, 6)
 
-            LazyVGrid(columns: Array(repeating: GridItem(.flexible(), spacing: 2), count: 7), spacing: 2) {
-                ForEach(grid, id: \.self) { day in
-                    monthCell(day)
+            // 6 行等分剩余高度：小窗口不溢出、大窗口铺满
+            GeometryReader { proxy in
+                let spacing = Self.cellSpacing
+                let rowHeight = (proxy.size.height - spacing * CGFloat(Self.rows - 1)) / CGFloat(Self.rows)
+                VStack(spacing: spacing) {
+                    ForEach(0..<Self.rows, id: \.self) { row in
+                        HStack(spacing: spacing) {
+                            ForEach(0..<Self.columns, id: \.self) { column in
+                                let index = row * Self.columns + column
+                                if grid.indices.contains(index) {
+                                    monthCell(grid[index], cellHeight: rowHeight)
+                                }
+                            }
+                        }
+                    }
                 }
             }
             .padding(.horizontal, 8)
+            .padding(.bottom, 8)
         }
     }
 
-    private func monthCell(_ day: Date) -> some View {
+    private func monthCell(_ day: Date, cellHeight: CGFloat) -> some View {
         let calendar = Calendar.current
         let isCurrentMonth = calendar.isDate(day, equalTo: currentMonth, toGranularity: .month)
         let isToday = calendar.isDateInToday(day)
         let dayEvents = eventsByDay[calendar.startOfDay(for: day)] ?? []
-        let visibleEvents = dayEvents.prefix(3)
+        let visibleCount = min(2, max(1, Int((cellHeight - 39) / 22)))
+        let visibleEvents = dayEvents.prefix(visibleCount)
+        let hasMore = dayEvents.count > visibleCount
 
         return VStack(alignment: .leading, spacing: 2) {
             Text(Self.dayFormatter.string(from: day))
@@ -408,25 +512,27 @@ struct MonthView: View {
 
             ForEach(visibleEvents) { event in
                 EventChip(event: event)
+                    .opacity(isCurrentMonth ? 1 : 0.55)
             }
-            if dayEvents.count > 3 {
-                Text("+\(dayEvents.count - 3) 项")
+            if hasMore {
+                Text("+\(dayEvents.count - visibleCount) 项")
                     .font(.system(size: 9))
-                    .foregroundStyle(.secondary)
+                    .foregroundStyle(isCurrentMonth ? AnyShapeStyle(.secondary) : AnyShapeStyle(.tertiary))
                     .padding(.leading, 4)
             }
             Spacer(minLength: 0)
         }
-        .padding(4)
-        .frame(maxWidth: .infinity, minHeight: 84, alignment: .topLeading)
+        .padding(3)
+        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
         .background(
             RoundedRectangle(cornerRadius: 6)
-                .fill(isToday ? Color.accentColor.opacity(0.12) : Color.primary.opacity(0.03))
+                .fill(isCurrentMonth ? Color.primary.opacity(0.03) : Color.primary.opacity(0.012))
         )
         .overlay(
             RoundedRectangle(cornerRadius: 6)
                 .stroke(isToday ? Color.accentColor.opacity(0.6) : Color.clear, lineWidth: 1)
         )
+        .clipShape(RoundedRectangle(cornerRadius: 6))
     }
 }
 
